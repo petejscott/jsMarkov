@@ -27,6 +27,26 @@
 		}
 	}
 	
+	html, body { height: 100vh; }
+	
+	header { 
+		background: #f6f6f6;
+		padding: 1rem 0 0.5rem 0;
+		margin-bottom: 2rem;
+		text-align: center;
+		border-bottom: 1px solid #f0f0f0;
+	}
+	
+	footer { 
+		background: #f6f6f6;
+		padding: 1rem 0;
+		margin-top: 2rem;
+		text-align: center;
+		border-top: 1px solid #f0f0f0;
+		font-size: 0.8rem;
+		color: #555;
+	}
+	
 	body { 
 		margin: 0;
 		padding: 0;
@@ -53,7 +73,7 @@
 	section[data-step] {  
 	  border-bottom: 1px solid #ddd;
     }
-	h2 { 
+	h1, h2 { 
 		margin: 0;
 		padding: 0 0 0.25em 0;
 		font-weight: 300;
@@ -68,6 +88,10 @@
   </style>
 </head>
 <body>
+  
+  <header>
+	<h1>jsMarkov</h1>
+  </header>
   
   <main>
   
@@ -90,6 +114,10 @@
   <section id="markovOutput"></section>
   
   </main>
+  
+  <footer>
+	<p>&copy; 2014 teknine.com</p>
+  </footer>
   
   <script src="markovWordsetBuilder.js"></script>
   <script src="markovDictionaryBuilder.js"></script>
