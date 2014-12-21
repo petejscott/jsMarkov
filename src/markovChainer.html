@@ -1,33 +1,60 @@
 <!doctype html>
 <html>
 <head>
+  <meta charset="utf-8" />
   <title>markov</title>
   <style>
-    #markovInput,
-    #markovOutput { 
+	body { 
+		margin: 0;
+		padding: 0;
+		background: #fff;
+		color:#111;
+		font-family: sans-serif;
+	}
+	input { font-size: 1rem; }
+    section { 
       width: 40em; 
       padding: 0.5em; 
       background:#f0f0f0; 
       margin: 1em auto; 
     }
-	.hidden { display: none; }
+	section[data-step]::before {
+		content: attr(data-step);
+		font-size:3rem;
+	}
+	h2 { 
+		margin: 0;
+		padding: 0;
+	}
+	section[data-step] {
+		transition: opacity 0.3s;
+	}
+	.disabled { 
+		opacity: 0.2; 
+	}
+	.enabled { opacity: 1; }
   </style>
 </head>
 <body>
   
   <!-- only allow text/plain -->
-  <div id="markovInput">
-  
-	<label for="markovFile">Select a source file</label>
+  <section data-step="1">
+    <h2>Select a source text file</h2>
+	<label for="markovFile">Select file</label>
     <input id="markovFile" type="file" accept="text/plain" required="required"> 
-	<input type="button" value="Load" id="markovLoad" /> 
-	<input type="submit" value="Generate!" id="markovSubmit" class="hidden" />
-	
-  </div>
+  </section>
   
-  <div id="markovOutput"></div>
+  <section data-step="2" class="disabled">
+    <h2>Build the Dictionary</h2>
+	<input type="button" value="Build Dictionary" id="markovLoad" /> 
+  </section>
   
-  <pre><code id="source"></code></pre>
+  <section data-step="3" class="disabled">
+	<h2>Generate Sentence</h2>
+	<input type="submit" value="Generate!" id="markovSubmit" />
+  </section>
+  
+  <section id="markovOutput"></section>
   
   <script src="markovWordsetBuilder.js"></script>
   <script src="markovDictionaryBuilder.js"></script>

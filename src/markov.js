@@ -9,53 +9,51 @@
   var CONST_MK_SUBMIT = "#markovSubmit";
   var CONST_MK_OUTPUT = "#markovOutput";
   
+  var sourceText = null;
   var dict = null;
   var wordSet = null;
   
-  function getFiles() {
-	var wordFile = win.document.querySelector(CONST_MK_INPUT);
-	return wordFile.files;
+  function disableStep(step) {
+	var element = win.document.querySelector("[data-step='"+step+"']");
+	if (element === null) return;
+    element.classList.remove("enabled");
+	element.classList.add("disabled");
+	var inputs = element.querySelectorAll("input");
+	for (var i = 0, len = inputs.length; i < len; i++) {
+	  inputs[i].disabled = true;
+	}
+  }
+  function enableStep(step) {
+	var element = win.document.querySelector("[data-step='"+step+"']");
+	if (element === null) return;
+	element.classList.remove("disabled");
+	element.classList.add("enabled");
+	var inputs = element.querySelectorAll("input");
+	for (var i = 0, len = inputs.length; i < len; i++) {
+	  inputs[i].disabled = false;
+	}
   }
   
   function readFile(e) {
-	var files = getFiles();
-	if (files.length === 0) {
-	  var output = win.document.querySelector(CONST_MK_OUTPUT);
-	  output.textContent = "Select a file first!";
-	  return;
-	};
+	var files = win.document.querySelector(CONST_MK_INPUT).files;
+	if (files === null || files.length === 0) return;
 	var file = files[0];
 	var reader = new FileReader();
-	reader.onload = onFileLoad;
+	reader.onload = function(e) {
+		sourceText = e.target.result;
+		enableStep(2);
+		disableStep(3);
+	};
 	reader.readAsText(file);
-  }
-  
-  function onFileLoad(e) {
-	var sourceData = e.target.result;
-	setWords(sourceData);
-  }
-  
-  function bind() {
-	var wordFile = win.document.querySelector(CONST_MK_LOAD);
-	wordFile.addEventListener("click", function(e) { readFile(e); });
-  }
+  } 
   
   function setWords(source) {
-	
-	var output = win.document.querySelector(CONST_MK_OUTPUT);
-	output.textContent = "Building dictionary... (this might take a while)";
-	
 	win.setTimeout(function() {
 	  var text = source.replace(/[\r\n]/gi, ' ');
 	  var el = win.document.querySelector("#source");
-	  var wordSet = markovWordsetBuilder.addWords(text, ' ');
-	  var dict = markovDictionaryBuilder.buildDict(wordSet, chainSize);
-			  
-	  var wordSubmit = win.document.querySelector(CONST_MK_SUBMIT);
-	  wordSubmit.addEventListener("click", function(e) { buildSentence(dict, wordSet, chainSize); });
-	  wordSubmit.classList.remove("hidden");
-	  
-	  output.textContent = "Ready!";
+	  wordSet = markovWordsetBuilder.addWords(text, ' ');
+	  dict = markovDictionaryBuilder.buildDict(wordSet, chainSize);	  
+	  enableStep(3);
 	}, 0);
   }
   
@@ -63,9 +61,28 @@
 	var sentence = markovGenerator.generateSentence(dict, wordSet, chainSize);
 	var output = win.document.querySelector(CONST_MK_OUTPUT);
 	output.textContent = sentence;
+  } 
+  
+  function bind() {
+	
+	// bind change event to file input
+	var wordFile = win.document.querySelector(CONST_MK_INPUT);
+	wordFile.addEventListener("change", function(e) { readFile(e); });
+	
+	// bind click event to build dictionary button
+	var wordFile = win.document.querySelector(CONST_MK_LOAD);
+	wordFile.addEventListener("click", function(e) { setWords(sourceText); });
+	
+	// bind click event to generate sentence button	
+    var wordSubmit = win.document.querySelector(CONST_MK_SUBMIT);
+	wordSubmit.addEventListener("click", function(e) { buildSentence(dict, wordSet, chainSize); });
+	
   }
   
   function init() {
+	disableStep(2);
+	disableStep(3);
+	readFile(null); // detect any file already set even if the change event hasn't fired
   }
   
   bind();
