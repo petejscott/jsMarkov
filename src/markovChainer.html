@@ -4,12 +4,14 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-  <title>markov</title>
+  <title>jsMarkov</title>
+  
+  <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
   <style>
 	@media screen and (min-width: 480px) {		
-		body main { max-width: 80vw; }
 		main section[data-step] {
 			position: relative;
+			margin-left: 5rem;
 		}
 		main section[data-step]::before {
 			content: attr(data-step);
@@ -19,9 +21,9 @@
 			content: attr(data-step);
 		}
 	}
-	@media screen and (min-width: 840px) {
+	@media screen and (min-width: 800px) {
 		body main { 
-			max-width: 50vw;
+			max-width: 60vw;
 		}
 	}
 	
@@ -30,9 +32,14 @@
 		padding: 0;
 		background: #fff;
 		color:#111;
-		font-family: sans-serif;
+		font-family: Roboto, sans-serif;
+		font-weight: 300;
 	}
-	input { font-size: 1rem; }
+	input { 
+		font-size: 1rem; 
+		font-family: Roboto, sans-serif;
+		font-weight: 300;
+	}
 	
     main { 
 	  max-width: 98vw;
@@ -40,13 +47,16 @@
 	  transition: all 0.2s;
 	}
 	section {
-      padding: 0.5em; 
-      background:#f0f0f0; 
+      padding: 0 0.5em 1em; 
       margin: 1em; 
+    }
+	section[data-step] {  
+	  border-bottom: 1px solid #ddd;
     }
 	h2 { 
 		margin: 0;
-		padding: 0;
+		padding: 0 0 0.25em 0;
+		font-weight: 300;
 	}
 	section[data-step] {
 		transition: opacity 0.2s;
@@ -61,7 +71,6 @@
   
   <main>
   
-  <!-- only allow text/plain -->
   <section data-step="1">
     <h2>Select a source text file</h2>
 	<label for="markovFile">Select file</label>
