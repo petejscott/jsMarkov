@@ -2,8 +2,29 @@
 <html>
 <head>
   <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <title>markov</title>
   <style>
+	@media screen and (min-width: 480px) {		
+		body main { max-width: 80vw; }
+		main section[data-step] {
+			position: relative;
+		}
+		main section[data-step]::before {
+			content: attr(data-step);
+			font-size:3rem;
+			position: absolute;
+			left: -3rem;
+			content: attr(data-step);
+		}
+	}
+	@media screen and (min-width: 840px) {
+		body main { 
+			max-width: 50vw;
+		}
+	}
+	
 	body { 
 		margin: 0;
 		padding: 0;
@@ -12,22 +33,23 @@
 		font-family: sans-serif;
 	}
 	input { font-size: 1rem; }
-    section { 
-      width: 40em; 
+	
+    main { 
+	  max-width: 98vw;
+	  margin: 0 auto;
+	  transition: all 0.2s;
+	}
+	section {
       padding: 0.5em; 
       background:#f0f0f0; 
-      margin: 1em auto; 
+      margin: 1em; 
     }
-	section[data-step]::before {
-		content: attr(data-step);
-		font-size:3rem;
-	}
 	h2 { 
 		margin: 0;
 		padding: 0;
 	}
 	section[data-step] {
-		transition: opacity 0.3s;
+		transition: opacity 0.2s;
 	}
 	.disabled { 
 		opacity: 0.2; 
@@ -36,6 +58,8 @@
   </style>
 </head>
 <body>
+  
+  <main>
   
   <!-- only allow text/plain -->
   <section data-step="1">
@@ -55,6 +79,8 @@
   </section>
   
   <section id="markovOutput"></section>
+  
+  </main>
   
   <script src="markovWordsetBuilder.js"></script>
   <script src="markovDictionaryBuilder.js"></script>
