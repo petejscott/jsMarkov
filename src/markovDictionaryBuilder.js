@@ -12,11 +12,6 @@ var markovDictionaryBuilder = (function() {
     return chainSet;
   }
   
-  function getWordsAtPosition(wordSet, chainSize, i) {
-	var end = parseFloat(i) + parseFloat(chainSize);
-	return wordSet.slice(i, end);
-  }
-  
   function buildDict(wordSet, chainSize) {
     console.log("building dictionary from " + wordSet.length + " words with a chain size of " + chainSize);
     var chains = getChains(wordSet, chainSize);
