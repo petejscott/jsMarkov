@@ -48,13 +48,29 @@
   } 
   
   function setWords(source) {
-	win.setTimeout(function() {
-	  var text = source.replace(/[\r\n]/gi, ' ');
-	  var el = win.document.querySelector("#source");
-	  wordSet = markovWordsetBuilder.addWords(text, ' ');
-	  dict = markovDictionaryBuilder.buildDict(wordSet, chainSize);	  
-	  enableStep(3);
-	}, 0);
+    
+	var text = source.replace(/[\r\n]/gi, ' ');
+	var el = win.document.querySelector("#source");
+	wordSet = markovWordsetBuilder.addWords(text, ' ');
+	
+	var dictionaryWorker = new Worker("js/markovDictionaryWorker.js");
+	dictionaryWorker.onmessage = function(e) {
+      dict = e.data.dict;
+      enableStep(3);
+	  dictionaryWorker.terminate();
+    }
+	
+	dictionaryWorker.postMessage({
+		'wordSet' : wordSet,
+		'chainSize' : chainSize});
+	
+	// win.setTimeout(function() {
+	  // var text = source.replace(/[\r\n]/gi, ' ');
+	  // var el = win.document.querySelector("#source");
+	  // wordSet = markovWordsetBuilder.addWords(text, ' ');
+	  // dict = markovDictionaryBuilder.buildDict(wordSet, chainSize);	  
+	  // enableStep(3);
+	// }, 0);
   }
   
   function buildSentence(dict, wordSet, chainSize) {

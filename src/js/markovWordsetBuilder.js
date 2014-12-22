@@ -2,7 +2,7 @@
 
 var markovWordsetBuilder = (function() {
 
-  var max_words = 30000;
+  var max_words = 80000;
   
   function stripChars(word) {
     return word.replace(/[^\w\s\.\!\?\'\,\—\-]/gi, '');
