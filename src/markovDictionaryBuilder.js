@@ -50,18 +50,7 @@ var markovDictionaryBuilder = (function() {
     }
     return null;
   }
-  
-  onmessage = function(e) {
-    console.log('Message received from main script');
-    var wordSet = e.data.wordSet;
-	var chainSize = e.data.chainSize;
-	buildDict(wordSet, chainSize);
-	postMessage( { 'dict' : dict , 'wordSet' : wordSet });
-  }
 
-  return { 
-	onmessage : onmessage ,
-	buildDict : buildDict
-	};
+  return { buildDict : buildDict };
 
 })();
