@@ -35,6 +35,11 @@
   }
   
   function readFile(e) {
+	
+	sourceText = null;
+	wordSet = null;
+	dict = null;
+	
 	var files = win.document.querySelector(CONST_MK_INPUT).files;
 	if (files === null || files.length === 0) return;
 	var file = files[0];
@@ -49,6 +54,9 @@
   
   function setWords(source) {
     
+	wordSet = null;
+	dict = null;
+	
 	var dictStatus = win.document.querySelector(".dictStatus");
 	dictStatus.textContent = "Building...";
 	
