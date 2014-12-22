@@ -49,6 +49,9 @@
   
   function setWords(source) {
     
+	var dictStatus = win.document.querySelector(".dictStatus");
+	dictStatus.textContent = "Building...";
+	
 	var text = source.replace(/[\r\n]/gi, ' ');
 	var el = win.document.querySelector("#source");
 	wordSet = markovWordsetBuilder.addWords(text, ' ');
@@ -57,20 +60,13 @@
 	dictionaryWorker.onmessage = function(e) {
       dict = e.data.dict;
       enableStep(3);
+	  dictStatus.textContent = "";
 	  dictionaryWorker.terminate();
     }
 	
 	dictionaryWorker.postMessage({
 		'wordSet' : wordSet,
 		'chainSize' : chainSize});
-	
-	// win.setTimeout(function() {
-	  // var text = source.replace(/[\r\n]/gi, ' ');
-	  // var el = win.document.querySelector("#source");
-	  // wordSet = markovWordsetBuilder.addWords(text, ' ');
-	  // dict = markovDictionaryBuilder.buildDict(wordSet, chainSize);	  
-	  // enableStep(3);
-	// }, 0);
   }
   
   function buildSentence(dict, wordSet, chainSize) {
