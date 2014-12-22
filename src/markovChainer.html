@@ -65,6 +65,7 @@
 	  max-width: 98vw;
 	  margin: 0 auto;
 	  transition: all 0.2s;
+	  min-height: calc(100% - 13.25rem);
 	}
 	section {
       padding: 0 0.5em 1em; 
@@ -74,10 +75,12 @@
 	  border-bottom: 1px solid #ddd;
     }
 	h1, h2 { 
+		font-size: 1.5rem;
 		margin: 0;
-		padding: 0 0 0.25em 0;
+		padding: 0 0 0.25rem 0;
 		font-weight: 300;
 	}
+	h1 { font-size: 2rem; }
 	section[data-step] {
 		transition: opacity 0.2s;
 	}
@@ -95,7 +98,7 @@
   
   <main>
   
-  <section data-step="1">
+  <section data-step="1" class="enabled">
     <h2>Select a source text file</h2>
 	<label for="markovFile">Select file</label>
     <input id="markovFile" type="file" accept="text/plain" required="required"> 
