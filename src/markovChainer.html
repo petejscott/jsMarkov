@@ -8,26 +8,16 @@
   
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
   <style>
-	@media screen and (min-width: 480px) {		
-		main section[data-step] {
-			position: relative;
-			margin-left: 5rem;
-		}
-		main section[data-step]::before {
-			content: attr(data-step);
-			font-size:3rem;
-			position: absolute;
-			left: -3rem;
-			content: attr(data-step);
+	@media screen and (min-width: 480px) {	
+		body main {
+			width: 80vw;
 		}
 	}
 	@media screen and (min-width: 800px) {
 		body main { 
-			max-width: 60vw;
+			width: 60vw;
 		}
 	}
-	
-	html, body { height: 100vh; }
 	
 	header { 
 		background: #f6f6f6;
@@ -54,6 +44,10 @@
 		color:#111;
 		font-family: Roboto, sans-serif;
 		font-weight: 300;
+		height: 100vh;
+		width: 100vw;
+		display: flex;
+		flex-direction: column;
 	}
 	input { 
 		font-size: 1rem; 
@@ -62,22 +56,42 @@
 	}
 	
     main { 
-	  max-width: 98vw;
-	  margin: 0 auto;
-	  transition: all 0.2s;
-	  min-height: calc(100% - 13.25rem);
+		margin: 0 auto;
+		transition: all 0.2s;
+		flex: 1 0 auto;	  
+		width: 96vw;
+		
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: flex-start;
 	}
+	
 	section {
-      padding: 0 0.5em 1em; 
-      margin: 1em; 
+      padding: 0 0.5rem; 
+	  transition: all 0.25s;
+	  
+	  display: flex;
+	  align-items: center;
+	  justify-content: stretch;
+	  padding-bottom: 1rem;
+	  margin-top: 1rem;
+	  border-bottom: 1px solid #ccc;
     }
-	section[data-step] {  
-	  border-bottom: 1px solid #ddd;
-    }
+	.workflow-name { 
+		font-size: 3rem;
+		margin-right: 1rem;
+	}
+	.workflow-contents {
+	}
+	
 	section#markovOutput { 
 	  text-align: center;
 	  font-size: 1.5rem;
+	  border-bottom-width: 0;
+	  align-self: center;
 	}
+	
 	h1, h2 { 
 		font-size: 1.5rem;
 		margin: 0;
@@ -102,22 +116,31 @@
   
   <main>
   
-  <section data-step="1" class="enabled">
-    <h2>Select a source text file</h2>
-    <input id="markovFile" type="file" accept="text/plain" required="required"> 
-  </section>
-  
-  <section data-step="2" class="disabled">
-    <h2>Build the Dictionary</h2>
-	<input type="button" value="Build Dictionary" id="markovLoad" /> <span class="dictStatus"></span>
-  </section>
-  
-  <section data-step="3" class="disabled">
-	<h2>Generate Sentence</h2>
-	<input type="submit" value="Generate!" id="markovSubmit" />
-  </section>
-  
-  <section id="markovOutput"></section>
+	  <section data-step="1" class="enabled">
+		<div class="workflow-name">1</div>
+		<div class="workflow-contents">
+			<h2>Select a source text file</h2>
+			<input id="markovFile" type="file" accept="text/plain" required="required"> 
+		</div>
+	  </section>
+	  
+	  <section data-step="2" class="disabled">
+		<div class="workflow-name">2</div>
+		<div class="workflow-contents">	 
+			<h2>Build the Dictionary</h2>
+			<input type="button" value="Build Dictionary" id="markovLoad" /> <span class="dictStatus"></span>
+		</div>
+	  </section>
+	  
+	  <section data-step="3" class="disabled">
+		<div class="workflow-name">3</div>
+		<div class="workflow-contents">
+			<h2>Generate Sentence</h2>
+			<input type="submit" value="Generate!" id="markovSubmit" />
+		</div>
+	  </section>
+	  
+	  <section id="markovOutput"></section>
   
   </main>
   
