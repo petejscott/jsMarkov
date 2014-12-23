@@ -4,7 +4,9 @@ var markovWordsetBuilder = (function() {
 
 	var max_words = 80000;
 
-	function stripChars(word) {
+	function transformWord(word) {
+		word = word.replace("Mr.", "Mr");
+		word = word.replace("Mrs.", "Mrs");
 		return word.replace(/[^A-Za-z0-9\s\.\!\?\'\,\—\-]/gi, '');
 	}
 
@@ -17,7 +19,7 @@ var markovWordsetBuilder = (function() {
 		console.log("adding words (max of " + len + ")");
 
 		for (var i = 0; i < len; i++) {
-			var word = stripChars(aw[i]);
+			var word = transformWord(aw[i]);
 			if (word.length > 0) wordSet.push(word);
 		}
 		return wordSet;
