@@ -50,6 +50,8 @@ var markovGenerator = (function() {
 		if (typeof(opts.numberOfSentences) === 'undefined') opts.numberOfSentences = 1;
 		// make sure EOS is set
 		if (typeof(opts.endOfSentenceRegex) === 'undefined') opts.endOfSentenceRegex = /[!?.]$/;
+		// provide a default for max number of words per sentence
+		if (typeof(opts.maxWordsPerSentence) === 'undefined') opts.maxWordsPerSentence = 50;
 		return opts;
 	}
 	
@@ -58,15 +60,15 @@ var markovGenerator = (function() {
 		if (typeof(iteration) === 'undefined') iteration = 0;
 		iteration++;
 		if (iteration > 50) {
-			throw "maximum iterations exceeded while trying to generate a sentence";
+			console.log("maximum iterations exceeded while trying to generate a sentence");
+			return ""; //return an empty sentence
 		}
 		
 		// select random words to use as a seed for the sentence
 		var words = getRandomWords(dict, opts.seedPattern).slice();
 		
 		// build the rest of the sentence
-		var runonLength = 50; // number of words in a single sentence
-		while (words.length < runonLength) {
+		while (words.length < opts.maxWordsPerSentence) {
 			var nextWord = getNextWord(words, dict, opts);
 			// break loop if no next word available 
 			if (nextWord === null) break;
@@ -94,8 +96,12 @@ var markovGenerator = (function() {
 		var cnt = 0;
 		while (cnt < opts.numberOfSentences)
 		{
-			sentences.push(generateSentence(dict, opts));
-			cnt++;
+			var sentence = generateSentence(dict, opts);
+			if (sentence.length > 1)
+			{
+				sentences.push(sentence);
+				cnt++;
+			}
 		}
 		return sentences.join(" ");
 	}
