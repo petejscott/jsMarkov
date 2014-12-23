@@ -2,45 +2,31 @@
 
 var markovDictionaryBuilder = (function() {
   
-  function getChains(wordSet, chainSize) {
-    if (wordSet.length < chainSize) return;
-    var chainSet = [];
-    for (var start = 0, len = (wordSet.length - chainSize + 1); start < len; start++) { 
-	  var end = parseFloat(start) + parseFloat(chainSize);
-	  chainSet.push(wordSet.slice(start, end));
-    }
-    return chainSet;
-  }
-  
   function buildDict(wordSet, chainSize) {
     console.log("building dictionary from " + wordSet.length + " words with a chain size of " + chainSize);
-    var chains = getChains(wordSet, chainSize);
-	var dict = [];
 	
-    for (var i = 0, len = chains.length; i < len; i++) {
-      var chainSet = chains[i];
+	var dict = [];
+	for (var i = 0, len = wordSet.length - chainSize; i < len; i++) {
+		
+		var end = i + parseFloat(chainSize);
+		var k = wordSet.slice(i, end);
+		var n = [wordSet[end]];
+		
+		var dictItem = {
+			'key' : k.join('/'),
+			'words' : k,
+			'next' : n
+		};
+		
+		var match = getDictItemByKey(dict, dictItem.key);
       
-      var dictItem = { 
-        'key' : chainSet.join('/') , 
-        'words' : chainSet, 
-        'next' : [] };
-      
-	  var inc = chainSize - 1;
-	  if (inc === 0) inc = 1;
-      var nextIndex = parseFloat(i) + inc;
-	  if (len > nextIndex) {
-        dictItem.next.push(chains[nextIndex][1]);
-      }
-      
-      var match = getDictItemByKey(dict, dictItem.key);
-      
-      if (match !== null) {
-        var index = dict.indexOf(match);
-        dict[index].next.push(dictItem.next[0]);
-      } else {
-        dict.push(dictItem);
-      }
-    }
+		if (match !== null) {
+			var index = dict.indexOf(match);
+			dict[index].next.push(dictItem.next[0]);
+		} else {
+			dict.push(dictItem);
+		}
+	}
 	return dict;
   }
   
@@ -50,7 +36,7 @@ var markovDictionaryBuilder = (function() {
     }
     return null;
   }
-
-  return { buildDict : buildDict };
+  
+  return { buildDict : buildDict  };
 
 })();

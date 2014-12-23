@@ -49,7 +49,7 @@
 		display: flex;
 		flex-direction: column;
 	}
-	input { 
+	input, select { 
 		font-size: 1rem; 
 		font-family: Roboto, sans-serif;
 		font-weight: 300;
@@ -106,6 +106,17 @@
 		opacity: 0.1; 
 	}
 	.enabled { opacity: 1; }
+	
+	label { 
+		display:block; 
+		margin: 1rem 0 0.25rem; 
+		color: #888;
+		font-size: 0.9rem;
+	}
+	h2 + label { 
+		margin-top: 0;
+	}
+	
   </style>
 </head>
 <body>
@@ -120,7 +131,17 @@
 		<div class="workflow-name">1</div>
 		<div class="workflow-contents">
 			<h2>Select a source text file</h2>
+			<!--
+			<label for="markovFileChooser">Choose from the following list</label>
+			<select id="markovFileChooser">
+				<option>My Man Jeeves, by P.G. Wodehouse</option>
+				<option>XYZ</option>
+			</select>
+			<input type="button" value="Select" id="markovFileChooserSelector" />
+			-->
+			<label for="markovFile">Select a source file</label>
 			<input id="markovFile" type="file" accept="text/plain" required="required"> 
+			
 		</div>
 	  </section>
 	  
@@ -128,6 +149,11 @@
 		<div class="workflow-name">2</div>
 		<div class="workflow-contents">	 
 			<h2>Build the Dictionary</h2>
+			
+			<label for="markovChainSize">Select a chain size</label>
+			<input type="number" id="markovChainSize" min="1" max="4" value="2" />
+			
+			<label for="markovLoad">Then build the dictionary</label>
 			<input type="button" value="Build Dictionary" id="markovLoad" /> <span class="dictStatus"></span>
 		</div>
 	  </section>

@@ -2,7 +2,7 @@
 
 ; (function(win) {
     
-  var chainSize = 2;
+  var chainSize = 0;
   
   var CONST_MK_INPUT = "#markovFile";
   var CONST_MK_LOAD = "#markovLoad";
@@ -64,6 +64,9 @@
 	var el = win.document.querySelector("#source");
 	wordSet = markovWordsetBuilder.addWords(text, ' ');
 	
+	var chainSizeElement = win.document.querySelector("#markovChainSize");
+	chainSize = chainSizeElement.value;
+	
 	var dictionaryWorker = new Worker("js/markovDictionaryWorker.js");
 	dictionaryWorker.onmessage = function(e) {
       dict = e.data.dict;
@@ -77,7 +80,7 @@
 		'chainSize' : chainSize});
   }
   
-  function buildSentence(dict, wordSet, chainSize) {
+  function buildSentence() {
 	var sentence = markovGenerator.generateSentence(dict, wordSet, chainSize);
 	var output = win.document.querySelector(CONST_MK_OUTPUT);
 	output.textContent = sentence;
@@ -95,7 +98,7 @@
 	
 	// bind click event to generate sentence button	
     var wordSubmit = win.document.querySelector(CONST_MK_SUBMIT);
-	wordSubmit.addEventListener("click", function(e) { buildSentence(dict, wordSet, chainSize); });
+	wordSubmit.addEventListener("click", function(e) { buildSentence(); });
 	
   }
   
