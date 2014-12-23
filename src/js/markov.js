@@ -101,7 +101,6 @@
 	function buildSentence() {
 		var opts = {
 			'seedPattern' : /[A-Z]/,
-			'minWordCount' : 5,
 			'numberOfSentences' : 2
 		};
 		var sentence = markovGenerator.generateSentences(dict, opts);

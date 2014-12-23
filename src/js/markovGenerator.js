@@ -45,11 +45,7 @@ var markovGenerator = (function() {
 	function setOptions(dict, opts) {
 		if (opts === null || typeof(opts) === 'undefined') opts = {};
 		// determine chainSize from dictionary
-		var chainSize = dict[0].words.length;		
-		// set minWordCount to the larger of provided or chainSize+1
-		if (typeof(opts.minWordCount) === 'undefined' || opts.minWordCount < chainSize + 1) {
-			opts.minWordCount = chainSize + 1;
-		}
+		var chainSize = dict[0].words.length;
 		// if numberOfSentences is not provided, assume 1
 		if (typeof(opts.numberOfSentences) === 'undefined') opts.numberOfSentences = 1;
 		// make sure EOS is set
@@ -81,12 +77,6 @@ var markovGenerator = (function() {
 		}
 		
 		var sentence = words.join(" ");
-		
-		// after loop, make sure opts.min is satisified (if provided). If not, try again!
-		if (words.length < opts.minWordCount) {
-			console.log("too few words: " + words.join(" "));
-			sentence = generateSentence(dict, opts, iteration);
-		}
 		
 		return sentence;
 	}
