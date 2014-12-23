@@ -1,3 +1,5 @@
+'use strict';
+
 var mString = "The cat in the hat with the bat is a gnat";
 var mWordSet = mString.split(' ');
 
@@ -161,4 +163,36 @@ QUnit.test( "Build Dictionary - Chain Size 4", function( assert )
 	i = 6;
 	assert.ok( dict[i].words.join("/") === "the/bat/is/a" ,"Dictionary item at index " + i + ": words property value is " + dict[i].words.join("/") );
 	assert.ok( dict[i].next.join("/") === "gnat" , "Dictionary item at index " + i + ": next property value is " + dict[i].next.join("/") );
+});
+QUnit.test( "Generator - getRandomWords", function( assert ) 
+{
+	var chainSize = 2;
+	var dict = markovDictionaryBuilder.buildDict(mWordSet, chainSize);
+	
+	var rWords = markovGenerator.getRandomWords(dict);
+	assert.ok( rWords.length === chainSize , "getRandomWords word count matches chainSize" );
+	
+	var regexPassedWordSet = [ "The", "Cat", "In", "The", "Hat" ];
+	var re = /[A-Z]/;
+	var dict = markovDictionaryBuilder.buildDict(regexPassedWordSet, chainSize);
+	var rWords = markovGenerator.getRandomWords(dict, re);
+	assert.ok( re.test(rWords[0]) , "Provided RegExp succeeded" );
+	
+	var regexFailedWordSet = [ "the", "cat", "in", "the", "hat" ]; // after 50 attempts, we should get a result even if it doesn't match the expression
+	var re = /[A-Z]/;
+	var dict = markovDictionaryBuilder.buildDict(regexFailedWordSet, chainSize);
+	var rWords = markovGenerator.getRandomWords(dict, re);
+	assert.ok( re.test(rWords[0]) === false , "Provided RegExp failed (expected)" );
+});
+QUnit.test( "Generator - generateSentence with default options", function( assert )
+{
+	var chainSize = 2;
+	var dict = markovDictionaryBuilder.buildDict(mWordSet, chainSize);
+	
+	var x = 0;
+	while (x < 10) {
+		x++;
+		var sentence = markovGenerator.generateSentences(dict);
+		assert.ok ( sentence.length > 1 );
+	}
 });

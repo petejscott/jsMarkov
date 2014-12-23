@@ -99,7 +99,12 @@
 	}
 
 	function buildSentence() {
-		var sentence = markovGenerator.generateSentence(dict, chainSize);
+		var opts = {
+			'seedPattern' : /[A-Z]/,
+			'minWordCount' : 5,
+			'numberOfSentences' : 2
+		};
+		var sentence = markovGenerator.generateSentences(dict, opts);
 		var output = win.document.querySelector(CONST_MK_OUTPUT);
 		output.textContent = sentence;
 	} 
