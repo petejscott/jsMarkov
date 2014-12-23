@@ -18,12 +18,10 @@ var markovGenerator = (function() {
 		while (true) {
 			seedAttempt++;
 			var seed = dict[Math.floor(Math.random() * dict.length)].words;
-
 			var firstChar = seed[0].charAt(0);
 			if (firstChar === firstChar.toUpperCase()) {
 				break;
 			}
-
 			// too many loops, just use this one and move on.
 			if (seedAttempt > 20) {
 				break;
@@ -37,12 +35,9 @@ var markovGenerator = (function() {
 			var last_words = words.slice(-1 * chainSize);
 			var match = getDictItemByKey(dict, last_words.join('/'));
 			if (match === null) break;
-
 			var next_opts = match.next;
 			var rand_next = next_opts[Math.floor(Math.random() * next_opts.length)];
-
 			if (typeof(rand_next) === 'undefined') break;
-
 			words.push(rand_next);
 			if (EOS.test(rand_next)) break;
 		}
@@ -51,12 +46,9 @@ var markovGenerator = (function() {
 
 	function generateSentence(dict, chainSize) {
 		console.log("generating sentence");
-
 		var seed = getSeed(dict, chainSize);
 		var generatedWords = getWords(seed, dict, chainSize);
-
 		var sentence = generatedWords.join(' ');
-
 		if (EOS.test(sentence) === false) {
 			sentence = sentence + "."; // append a . to finish it
 		}
