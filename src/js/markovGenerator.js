@@ -6,7 +6,7 @@ var markovGenerator = (function() {
 	
 	function getDictItemByKey(dict, key) {
 		for (var i = 0, len = dict.length; i < len; i++) {
-			if (dict[i].key === key.toLowerCase()) return dict[i];
+			if (dict[i].key === key) return dict[i];
 		}
 		return null;
 	}
@@ -33,7 +33,7 @@ var markovGenerator = (function() {
 	function getWords(words, dict, chainSize) {
 		while (true) {
 			var last_words = words.slice(-1 * chainSize);
-			var match = getDictItemByKey(dict, last_words.join('/'));
+			var match = getDictItemByKey(dict, last_words.join('/').toLowerCase());
 			if (match === null) break;
 			var next_opts = match.next;
 			var rand_next = next_opts[Math.floor(Math.random() * next_opts.length)];
