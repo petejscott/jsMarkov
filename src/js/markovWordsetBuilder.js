@@ -5,7 +5,7 @@ var markovWordsetBuilder = (function() {
 	var max_words = 80000;
 
 	function stripChars(word) {
-		return word.replace(/[^\w\s\.\!\?\'\,\—\-]/gi, '');
+		return word.replace(/[^A-Za-z0-9\s\.\!\?\'\,\—\-]/gi, '');
 	}
 
 	function addWords(words, delimiter) {
@@ -24,5 +24,5 @@ var markovWordsetBuilder = (function() {
 	}
 
 	return { addWords : addWords } 
-
+	
 })();
