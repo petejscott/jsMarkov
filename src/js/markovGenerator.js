@@ -65,7 +65,15 @@ var markovGenerator = (function() {
 		}
 		
 		// select random words to use as a seed for the sentence
-		var words = getRandomWords(dict, opts.seedPattern).slice();
+		var words = [];
+		while (true) {
+			// loop until we find one that doesn't have words meeting the endOfSentenceRegex
+			words = getRandomWords(dict, opts.seedPattern).slice();
+			if (opts.endOfSentenceRegex.test(words[0]) === false && 
+				opts.endOfSentenceRegex.test(words[1]) === false) {
+					break;
+				}
+		}
 		
 		// build the rest of the sentence
 		while (words.length < opts.maxWordsPerSentence) {
@@ -75,7 +83,9 @@ var markovGenerator = (function() {
 			// add the word to the sentence
 			words.push(nextWord);
 			// break loop if we've ended in EOS punctuation
-			if (opts.endOfSentenceRegex.test(nextWord)) break;
+			if (opts.endOfSentenceRegex.test(nextWord)) {
+				break;
+			}
 		}
 		
 		var sentence = words.join(" ");
@@ -88,8 +98,7 @@ var markovGenerator = (function() {
 		return sentence;
 	}
 	
-	function generateSentences(dict, opts)
-	{
+	function generateSentences(dict, opts) {
 		// ensure dictionary was provided
 		if (dict === null || typeof(dict) === 'undefined') {
 			throw "dictionary must be provided";
@@ -99,11 +108,9 @@ var markovGenerator = (function() {
 		// generate sentences
 		var sentences = [];
 		var cnt = 0;
-		while (cnt < opts.numberOfSentences)
-		{
+		while (cnt < opts.numberOfSentences) {
 			var sentence = generateSentence(dict, opts);
-			if (sentence.length > 1)
-			{
+			if (sentence.length > 1) {
 				sentences.push(sentence);
 				cnt++;
 			}

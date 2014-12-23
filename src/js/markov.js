@@ -39,6 +39,7 @@
 		sourceText = null;
 		wordSet = null;
 		dict = null;
+		setOutput("");
 		var files = win.document.querySelector(CONST_MK_INPUT).files;
 		if (files === null || files.length === 0) return;
 		var file = files[0];
@@ -54,6 +55,7 @@
 	function setChainSize(e) {	
 		wordSet = null;
 		dict = null;
+		setOutput("");
 		disableStep(3);
 		var chainSizeElement = win.document.querySelector(CONST_MK_CHAINSIZE);
 		chainSize = chainSizeElement.value;		
@@ -79,6 +81,7 @@
 	function setWords(source) {
 		wordSet = null;
 		dict = null;
+		setOutput("");
 		setChainSize(null);
 		var dictStatus = win.document.querySelector(".dictStatus");
 		dictStatus.textContent = "Building...";
@@ -97,15 +100,19 @@
 			'wordSet' : wordSet,
 			'chainSize' : chainSize});
 	}
+	
+	function setOutput(text) {
+		var output = win.document.querySelector(CONST_MK_OUTPUT);
+		output.textContent = text;
+	}
 
 	function buildSentence() {
 		var opts = {
 			'seedPattern' : /[A-Z]/,
 			'numberOfSentences' : 2
 		};
-		var sentence = markovGenerator.generateSentences(dict, opts);
-		var output = win.document.querySelector(CONST_MK_OUTPUT);
-		output.textContent = sentence;
+		var sentences = markovGenerator.generateSentences(dict, opts);
+		setOutput(sentences);
 	} 
 
 	function bind() {
