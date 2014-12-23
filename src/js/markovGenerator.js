@@ -80,6 +80,11 @@ var markovGenerator = (function() {
 		
 		var sentence = words.join(" ");
 		
+		// if sentence does not end with punctuation, add ellipsis
+		if (opts.endOfSentenceRegex.test(sentence) === false) {
+			sentence += "...";
+		}
+		
 		return sentence;
 	}
 	
