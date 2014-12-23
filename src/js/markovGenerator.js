@@ -3,8 +3,6 @@
 var markovGenerator = (function() {
 
 	var EOS = [ "." , "?", "!" ];
-	var min_sentence_words = 5;
-	var max_sentence_words = 30;
 
 	function getDictItemByKey(dict, key) {
 		for (var i = 0, len = dict.length; i < len; i++) {
@@ -40,7 +38,6 @@ var markovGenerator = (function() {
 		while (true) {
 			var last_words = words.slice(-1 * chainSize);
 			var match = getDictItemByKey(dict, last_words.join('/'));
-
 			if (match === null) break;
 
 			var next_opts = match.next;
@@ -61,11 +58,6 @@ var markovGenerator = (function() {
 		var generatedWords = getWords(seed, dict, chainSize);
 
 		var sentence = generatedWords.join(' ');
-
-		var wordCount= generatedWords.length;
-		if (wordCount < min_sentence_words || wordCount > max_sentence_words) {
-			sentence = generateSentence(dict, chainSize);
-		}
 
 		if (!isFinalCharEOS(sentence)) {
 			sentence = sentence + "."; // append a . to finish it
