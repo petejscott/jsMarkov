@@ -23,6 +23,7 @@ var markovGenerator = (function() {
 				break;
 			}
 			// too many loops, just use this one and move on.
+			// TODO: I'd like to do something more intelligent here.
 			if (seedAttempt > 20) {
 				break;
 			}
