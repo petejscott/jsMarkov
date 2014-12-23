@@ -2,8 +2,8 @@
 
 var markovGenerator = (function() {
 
-	var EOS = [ "." , "?", "!" ];
-
+	var EOS = /!|\?|\./;
+	
 	function getDictItemByKey(dict, key) {
 		for (var i = 0, len = dict.length; i < len; i++) {
 			if (dict[i].key === key) return dict[i];
@@ -46,7 +46,7 @@ var markovGenerator = (function() {
 			if (typeof(rand_next) === 'undefined') break;
 
 			words.push(rand_next);
-			if (isFinalCharEOS(rand_next)) break;
+			if (EOS.test(rand_next)) break;
 		}
 		return words;
 	}
@@ -59,18 +59,10 @@ var markovGenerator = (function() {
 
 		var sentence = generatedWords.join(' ');
 
-		if (!isFinalCharEOS(sentence)) {
+		if (EOS.test(sentence) === false) {
 			sentence = sentence + "."; // append a . to finish it
 		}
 		return sentence;
-	}
-
-	function isFinalCharEOS(str) {
-		var final_char = str.charAt(str.length - 1); 
-		if (EOS.indexOf(final_char) > -1) {
-			return true;
-		}
-		return false;
 	}
 
 	return { generateSentence : generateSentence }
