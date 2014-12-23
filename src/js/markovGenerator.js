@@ -2,7 +2,7 @@
 
 var markovGenerator = (function() {
 
-	var EOS = /!|\?|\./;
+	var EOS = /[!?.]/;
 	
 	function getDictItemByKey(dict, key) {
 		for (var i = 0, len = dict.length; i < len; i++) {
