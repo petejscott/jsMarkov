@@ -21,13 +21,11 @@ var markovGenerator = (function() {
 
 			var firstChar = seed[0].charAt(0);
 			if (firstChar === firstChar.toUpperCase()) {
-				var generatedWords = seed;
 				break;
 			}
 
 			// too many loops, just use this one and move on.
 			if (seedAttempt > 20) {
-				var generatedWords = seed;
 				break;
 			}
 		}
