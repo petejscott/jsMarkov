@@ -20,8 +20,10 @@ var markovGenerator = (function() {
     var wordSize = wordSet.length;
     
     // find a seed that starts with a capital letter
+	var seedAttempt = 0;
     while (true) {
       
+      seedAttempt++;
 	  var seedStart = Math.floor(Math.random() * wordSize);
 	  var seedEnd = parseFloat(seedStart) + parseFloat(chainSize);
 	  var seed = wordSet.slice(seedStart, seedEnd);
@@ -32,10 +34,17 @@ var markovGenerator = (function() {
         var generatedWords = seed;
         break;
       }
+	  
+	  // too many loops, just use this one and move on.
+	  if (seedAttempt > 20)
+	  {
+		var generatedWords = seed;
+		break;
+	  }
     }
     
-    while (true) {
-      var last_words = generatedWords.slice(-1 * chainSize);
+	while (true) {
+	  var last_words = generatedWords.slice(-1 * chainSize);
 	  var match = getDictItemByKey(dict, last_words.join('/'));
       
       if (match === null) break;
@@ -47,7 +56,8 @@ var markovGenerator = (function() {
       
       generatedWords.push(rand_next);
       if (isFinalCharEOS(rand_next)) break;
-    }
+	  
+	}
     
     var sentence = generatedWords.join(' ');
     
