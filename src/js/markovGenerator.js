@@ -6,7 +6,7 @@ var markovGenerator = (function() {
 	
 	function getDictItemByKey(dict, key) {
 		for (var i = 0, len = dict.length; i < len; i++) {
-			if (dict[i].key === key) return dict[i];
+			if (dict[i].key === key.toLowerCase()) return dict[i];
 		}
 		return null;
 	}

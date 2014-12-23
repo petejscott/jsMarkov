@@ -13,7 +13,7 @@ var markovDictionaryBuilder = (function() {
 			var n = [wordSet[end]];
 			
 			var dictItem = {
-				'key' : k.join('/'),
+				'key' : k.join('/').toLowerCase(),
 				'words' : k,
 				'next' : n
 			};
@@ -27,12 +27,13 @@ var markovDictionaryBuilder = (function() {
 				dict.push(dictItem);
 			}
 		}
+		//console.log(dict);
 		return dict;
 	}
 
 	function getDictItemByKey(dict, key) {
 		for (var i = 0, len = dict.length; i < len; i++) {
-			if (dict[i].key === key) return dict[i];
+			if (dict[i].key === key.toLowerCase()) return dict[i];
 		}
 		return null;
 	}
