@@ -74,7 +74,7 @@
 	}
 
 	function buildSentence() {
-		var sentence = markovGenerator.generateSentence(dict, wordSet, chainSize);
+		var sentence = markovGenerator.generateSentence(dict, chainSize);
 		var output = win.document.querySelector(CONST_MK_OUTPUT);
 		output.textContent = sentence;
 	} 

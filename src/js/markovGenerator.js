@@ -13,18 +13,14 @@ var markovGenerator = (function() {
 		return null;
 	}
 
-	function generateSentence(dict, wordSet, chainSize) {
+	function generateSentence(dict, chainSize) {
 		console.log("generating sentence");
-
-		var wordSize = wordSet.length;
 
 		// find a seed that starts with a capital letter
 		var seedAttempt = 0;
 		while (true) {
 			seedAttempt++;
-			var seedStart = Math.floor(Math.random() * wordSize);
-			var seedEnd = parseFloat(seedStart) + parseFloat(chainSize);
-			var seed = wordSet.slice(seedStart, seedEnd);
+			var seed = dict[Math.floor(Math.random() * dict.length)].words;
 
 			var firstChar = seed[0].charAt(0);
 			if (firstChar === firstChar.toUpperCase())
@@ -60,7 +56,7 @@ var markovGenerator = (function() {
 
 		var wordCount= generatedWords.length;
 		if (wordCount < min_sentence_words || wordCount > max_sentence_words) {
-			sentence = generateSentence(dict, wordSet, chainSize);
+			sentence = generateSentence(dict, chainSize);
 		}
 
 		if (!isFinalCharEOS(sentence)) {
