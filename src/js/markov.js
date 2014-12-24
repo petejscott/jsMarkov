@@ -133,7 +133,7 @@
 
 		// bind change event to chain size selection
 		win.document.querySelector(CONST_MK_CHAINSIZE)
-			.addEventListener("change", function(e) { setChainSize(e); });
+			.addEventListener("input", function(e) { setChainSize(e); });
 		
 		// bind click event to build dictionary button
 		win.document.querySelector(CONST_MK_LOAD)
@@ -141,7 +141,7 @@
 
 		// bind change event to number of sentences selection
 		win.document.querySelector(CONST_MK_NUMSENTENCES)
-			.addEventListener("change", function(e) { setNumberOfSentences(e); });
+			.addEventListener("input", function(e) { setNumberOfSentences(e); });
 		
 		// bind click event to generate sentence button	
 		win.document.querySelector(CONST_MK_SUBMIT)
