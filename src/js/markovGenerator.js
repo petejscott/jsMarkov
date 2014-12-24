@@ -2,13 +2,12 @@
 
 var markovGenerator = (function(logger) {
 	
-	var map = {};
+	var map = null;
 	
 	function getDictItemByKey(dict, key) {
 		var mi = map[key];
 		var match = null;
-		if (typeof(mi) === 'number')
-		{
+		if (typeof(mi) !== 'undefined') {
 			match = dict[mi];
 		}
 		return match;
@@ -17,7 +16,7 @@ var markovGenerator = (function(logger) {
 	function buildMap(dict) {
 		var m = {};
 		for (var i = 0, len = dict.length; i < len; i++) {
-			m[dict.key] = i;
+			m[dict[i].key] = i;
 		}
 		return m;
 	}
@@ -118,7 +117,7 @@ var markovGenerator = (function(logger) {
 			throw "dictionary must be provided";
 		}
 		
-		map = buildMap(dict);
+		if (map === null) map = buildMap(dict);
 		
 		// set opts to good values
 		opts = setOptions(dict, opts);
