@@ -115,7 +115,8 @@
 		margin-top: 0;
 	}
 
-	#selectedChainSize { 
+	#selectedChainSize,
+	#selectedNumberOfSentences { 
 		color:#222;
 	}
 	input[type=range] {
@@ -169,6 +170,11 @@
 			<div class="workflow-name">3</div>
 			<div class="workflow-contents">
 				<h2>Generate Sentence</h2>
+				
+				<label for="markovNumberOfSentences">Number of sentences <span id="selectedNumberOfSentences"></span></label>
+				<input type="range" id="markovNumberOfSentences" min="1" max="20" value="2" />
+				
+				<label for="markovSubmit">Ready? Let's get to it!</label>
 				<input type="submit" value="Generate!" id="markovSubmit" />
 			</div>
 		</section>

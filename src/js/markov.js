@@ -8,9 +8,12 @@
 	var CONST_MK_LOAD = "#markovLoad";
 	var CONST_MK_SUBMIT = "#markovSubmit";
 	var CONST_MK_OUTPUT = "#markovOutput";
+	var CONST_MK_NUMSENTENCES = "#markovNumberOfSentences";
+	var CONST_MK_SELECTED_NUMSENTENCES = "#selectedNumberOfSentences";
 
 	var sourceText = null;
 	var chainSize = 0;
+	var numberOfSentences = 1;
 	var dict = null;
 	var wordSet = null;
 
@@ -77,6 +80,13 @@
 		var selectedChainSizeElement = win.document.querySelector(CONST_MK_SELECTED_CHAINSIZE);
 		selectedChainSizeElement.textContent = "(" + chainSizeDescription + ")";
 	}
+	
+	function setNumberOfSentences(e) {
+		var numSentencesElement = win.document.querySelector(CONST_MK_NUMSENTENCES);
+		numberOfSentences = numSentencesElement.value;
+		var selectedNumSentencesElement = win.document.querySelector(CONST_MK_SELECTED_NUMSENTENCES);
+		selectedNumSentencesElement.textContent = "(" + numberOfSentences + ")";
+	}
 
 	function setWords(source) {
 		wordSet = null;
@@ -109,7 +119,7 @@
 	function buildSentence() {
 		var opts = {
 			'seedPattern' : /[A-Z]/,
-			'numberOfSentences' : 2
+			'numberOfSentences' : numberOfSentences
 		};
 		var sentences = markovGenerator.generateSentences(dict, opts);
 		setOutput(sentences);
@@ -118,20 +128,24 @@
 	function bind() {
 
 		// bind change event to file input
-		var wordFile = win.document.querySelector(CONST_MK_INPUT);
-		wordFile.addEventListener("change", function(e) { readFile(e); });
+		win.document.querySelector(CONST_MK_INPUT)
+			.addEventListener("change", function(e) { readFile(e); });
 
 		// bind change event to chain size selection
-		var wordFile = win.document.querySelector(CONST_MK_CHAINSIZE);
-		wordFile.addEventListener("change", function(e) { setChainSize(e); });
+		win.document.querySelector(CONST_MK_CHAINSIZE)
+			.addEventListener("change", function(e) { setChainSize(e); });
 		
 		// bind click event to build dictionary button
-		var wordFile = win.document.querySelector(CONST_MK_LOAD);
-		wordFile.addEventListener("click", function(e) { setWords(sourceText); });
+		win.document.querySelector(CONST_MK_LOAD)
+			.addEventListener("click", function(e) { setWords(sourceText); });
 
+		// bind change event to number of sentences selection
+		win.document.querySelector(CONST_MK_NUMSENTENCES)
+			.addEventListener("change", function(e) { setNumberOfSentences(e); });
+		
 		// bind click event to generate sentence button	
-		var wordSubmit = win.document.querySelector(CONST_MK_SUBMIT);
-		wordSubmit.addEventListener("click", function(e) { buildSentence(); });
+		win.document.querySelector(CONST_MK_SUBMIT)
+			.addEventListener("click", function(e) { buildSentence(); });
 	}
 
 	function init() {
@@ -139,6 +153,7 @@
 		disableStep(3);
 		readFile(null); // detect any file already set even if the change event hasn't fired
 		setChainSize();
+		setNumberOfSentences();
 	}
 
 	bind();
