@@ -20,6 +20,17 @@
 			width: 60vw;
 		}
 	}
+	@media screen and (min-width: 1024px) {
+		body main {
+			width: 80vw;
+			flex-direction: row;
+			justify-content: space-between;
+		}
+		body section#markovOutput {
+			text-align: left;
+			max-width: 30rem;
+		}
+	}
 	
 	html { 
 		font-size: 14px; 
@@ -158,49 +169,51 @@
 	</header>
   
 	<main>
-
-	  <section data-step="1" class="enabled current">
-		<div class="workflow-name">1</div>
-		<div class="workflow-contents">
-			<h2>Select a source text file</h2>
-			<!--
-			<label for="markovFileChooser">Choose from the following list</label>
-			<select id="markovFileChooser">
-				<option>My Man Jeeves, by P.G. Wodehouse</option>
-				<option>XYZ</option>
-			</select>
-			<input type="button" value="Select" id="markovFileChooserSelector" />
-			-->
-			<label for="markovFile">Select a source file</label>
-			<input id="markovFile" type="file" accept="text/plain" required="required"> 			
-		</div>
-	  </section>
-	  
-		<section data-step="2" class="disabled">
-			<div class="workflow-name">2</div>
-			<div class="workflow-contents">	 
-				<h2>Build the Dictionary</h2>
-
-				<label for="markovChainSize">Select a chain size <span id="selectedChainSize"></span></label>
-				<input type="range" id="markovChainSize" min="1" max="4" value="2" />
-
-				<label for="markovLoad">Then build the dictionary</label>
-				<input type="button" value="Build Dictionary" id="markovLoad" /> <span class="dictStatus"></span>
-			</div>
-		</section>
-	  
-		<section data-step="3" class="disabled">
-			<div class="workflow-name">3</div>
+	
+		<div class="steps-container">
+		  <section data-step="1" class="enabled current">
+			<div class="workflow-name">1</div>
 			<div class="workflow-contents">
-				<h2>Generate Sentence</h2>
-				
-				<label for="markovNumberOfSentences">Number of sentences <span id="selectedNumberOfSentences"></span></label>
-				<input type="range" id="markovNumberOfSentences" min="1" max="20" value="2" />
-				
-				<label for="markovSubmit">Ready? Let's get to it!</label>
-				<input type="submit" value="Generate!" id="markovSubmit" />
+				<h2>Select a source text file</h2>
+				<!--
+				<label for="markovFileChooser">Choose from the following list</label>
+				<select id="markovFileChooser">
+					<option>My Man Jeeves, by P.G. Wodehouse</option>
+					<option>XYZ</option>
+				</select>
+				<input type="button" value="Select" id="markovFileChooserSelector" />
+				-->
+				<label for="markovFile">Select a source file</label>
+				<input id="markovFile" type="file" accept="text/plain" required="required"> 			
 			</div>
-		</section>
+		  </section>
+		  
+			<section data-step="2" class="disabled">
+				<div class="workflow-name">2</div>
+				<div class="workflow-contents">	 
+					<h2>Build the Dictionary</h2>
+
+					<label for="markovChainSize">Select a chain size <span id="selectedChainSize"></span></label>
+					<input type="range" id="markovChainSize" min="1" max="4" value="2" />
+
+					<label for="markovLoad">Then build the dictionary</label>
+					<input type="button" value="Build Dictionary" id="markovLoad" /> <span class="dictStatus"></span>
+				</div>
+			</section>
+		  
+			<section data-step="3" class="disabled">
+				<div class="workflow-name">3</div>
+				<div class="workflow-contents">
+					<h2>Generate Sentence</h2>
+					
+					<label for="markovNumberOfSentences">Number of sentences <span id="selectedNumberOfSentences"></span></label>
+					<input type="range" id="markovNumberOfSentences" min="1" max="20" value="2" />
+					
+					<label for="markovSubmit">Ready? Let's get to it!</label>
+					<input type="submit" value="Generate!" id="markovSubmit" />
+				</div>
+			</section>
+		</div>
 	  
 		<section id="markovOutput"></section>
 
