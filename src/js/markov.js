@@ -100,9 +100,15 @@
 		wordSet = markovWordsetBuilder.addWords(text, ' ');
 		var dictionaryWorker = new Worker("js/markovDictionaryWorker.js");
 		dictionaryWorker.onmessage = function(e) {
-			dict = e.data.dict;
-			enableStep(3);
-			dictStatus.textContent = "";
+			if (typeof(e.data.dict) !== 'undefined') {
+				dict = e.data.dict;
+				enableStep(3);
+				dictStatus.textContent = "";
+			}
+			if (typeof(e.data.error) !== 'undefined') {
+				dictStatus.textContent = "Build failed!";
+				alert("Sorry, I couldn't build that dictionary (" + e.data.error + ")");
+			}
 			dictionaryWorker.terminate();
 		}
 
