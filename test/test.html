@@ -27,9 +27,18 @@
 					sourceText = e.target.result;
 					var wordSet = markovWordsetBuilder.addWords(sourceText, ' ');
 					
+					console.log("testing dictionary build time");
 					console.time('time');
 					var dict = markovDictionaryBuilder.buildDict(wordSet, 3);
 					console.timeEnd('time');
+					
+					console.log("testing sentence generation time (1000 iterations)");
+					console.time('time');
+					for (var i = 0; i < 1000; i++) {
+						var sentence = markovGenerator.generateSentences(dict);
+					}
+					console.timeEnd('time');
+					
 				};
 				reader.readAsText(file);
 			}
