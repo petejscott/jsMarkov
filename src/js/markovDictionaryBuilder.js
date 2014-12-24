@@ -21,10 +21,15 @@ var markovDictionaryBuilder = (function() {
 				'next' : n
 			};
 			
-			var mi = map[dictItem.key];
+			//TODO: cheap hack to prevent keywords (e.g. "every") from being parsed as native code (e.g. function)
+			// revisit this issue, because this is bloody stupid.
+			var mapKey = "*" + dictItem.key;
+			
+			var mi = map[mapKey];
 			if (typeof(mi) === 'undefined') {
-				map[dictItem.key] = dict.length;
+				var dictIndex = dict.length;
 				dict.push(dictItem);
+				map[mapKey] = dictIndex;
 			} else {
 				dict[mi].next.push(dictItem.next[0]);
 			}
