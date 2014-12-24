@@ -17,24 +17,28 @@
 	var dict = null;
 	var wordSet = null;
 
-	function disableStep(step) {
-		var element = win.document.querySelector("[data-step='"+step+"']");
-		if (element === null) return;
-		element.classList.remove("enabled");
-		element.classList.add("disabled");
-		var inputs = element.querySelectorAll("input");
-		for (var i = 0, len = inputs.length; i < len; i++) {
-			inputs[i].disabled = true;
-		}
-	}
-	function enableStep(step) {
-		var element = win.document.querySelector("[data-step='"+step+"']");
-		if (element === null) return;
-		element.classList.remove("disabled");
-		element.classList.add("enabled");
-		var inputs = element.querySelectorAll("input");
-		for (var i = 0, len = inputs.length; i < len; i++) {
-			inputs[i].disabled = false;
+	function setCurrentStep(step) {
+		var stepElements = win.document.querySelectorAll("[data-step]");
+		for (var i = 0, len = stepElements.length; i < len; i++) {
+			var stepElement = stepElements[i];
+			if (stepElement.getAttribute("data-step") < step.toString()) {
+				stepElement.classList.remove("disabled");
+				stepElement.classList.remove("current");
+				stepElement.classList.add("enabled");
+			}
+			else if (stepElement.getAttribute("data-step") === step.toString()) {
+				stepElement.classList.remove("disabled");
+				stepElement.classList.add("current");
+				stepElement.classList.add("enabled");
+			}
+			else if (stepElement.getAttribute("data-step") > step.toString()) {
+				stepElement.classList.remove("current");
+				stepElement.classList.remove("enabled");
+				stepElement.classList.add("disabled");
+			}
+			else {
+				console.log(stepElement.getAttribute("data-step") + " doesn't match " + step);
+			}
 		}
 	}
 
@@ -49,8 +53,7 @@
 		var reader = new FileReader();
 		reader.onload = function(e) {
 			sourceText = e.target.result;
-			enableStep(2);
-			disableStep(3);
+			setCurrentStep(2);
 		};
 		reader.readAsText(file);
 	} 
@@ -59,7 +62,8 @@
 		wordSet = null;
 		dict = null;
 		setOutput("");
-		disableStep(3);
+		// disableStep(3);
+		setCurrentStep(2);
 		var chainSizeElement = win.document.querySelector(CONST_MK_CHAINSIZE);
 		chainSize = chainSizeElement.value;		
 		var chainSizeDescription = "";
@@ -102,7 +106,7 @@
 		dictionaryWorker.onmessage = function(e) {
 			if (typeof(e.data.dict) !== 'undefined') {
 				dict = e.data.dict;
-				enableStep(3);
+				setCurrentStep(3);
 				dictStatus.textContent = "";
 			}
 			if (typeof(e.data.error) !== 'undefined') {
@@ -155,8 +159,7 @@
 	}
 
 	function init() {
-		disableStep(2);
-		disableStep(3);
+		setCurrentStep(1);
 		readFile(null); // detect any file already set even if the change event hasn't fired
 		setChainSize();
 		setNumberOfSentences();
