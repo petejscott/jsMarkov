@@ -1,6 +1,6 @@
 'use strict';
 
-; (function(win) {
+; (function(win, logger) {
 
 	var CONST_MK_INPUT = "#markovFile";
 	var CONST_MK_CHAINSIZE = "#markovChainSize";
@@ -165,4 +165,4 @@
 	bind();
 	init();
 
-})(this);
+})(this, logger);

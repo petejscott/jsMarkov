@@ -1,6 +1,6 @@
 'use strict';
 
-var markovWordsetBuilder = (function() {
+var markovWordsetBuilder = (function(logger) {
 
 	var max_words = 80000;
 
@@ -16,7 +16,7 @@ var markovWordsetBuilder = (function() {
 		var aw = words.split(delimiter);
 		var len = aw.length;
 		if (len > max_words) len = max_words;
-		console.log("adding words (max of " + len + ")");
+		logger.logInfo("adding words (max of " + len + ")");
 
 		for (var i = 0; i < len; i++) {
 			var word = transformWord(aw[i]);
@@ -27,4 +27,4 @@ var markovWordsetBuilder = (function() {
 
 	return { addWords : addWords } 
 	
-})();
+})(logger);

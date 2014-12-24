@@ -1,11 +1,11 @@
 'use strict';
 
-var markovDictionaryBuilder = (function() {
+var markovDictionaryBuilder = (function(logger) {
 
 	function buildDict(wordSet, chainSize) {
 
-		console.log("building dictionary from " + wordSet.length + " words with a chain size of " + chainSize);
-
+		logger.logInfo("building dictionary from " + wordSet.length + " words with a chain size of " + chainSize);
+		
 		var map = [];
 		var dict = [];
 		for (var i = 0, len = wordSet.length - chainSize; i < len; i++) {
@@ -37,4 +37,4 @@ var markovDictionaryBuilder = (function() {
 		buildDict : buildDict
 	};
 
-})();
+})(logger);

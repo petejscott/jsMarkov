@@ -1,5 +1,7 @@
-if (typeof(importScripts) !== 'undefined') importScripts('markovDictionaryBuilder.js');
-
+if (typeof(importScripts) !== 'undefined') {
+	importScripts('logger.js');
+	importScripts('markovDictionaryBuilder.js');
+}
 onmessage = function(e) {
 	var wordSet = e.data.wordSet;
 	var chainSize = e.data.chainSize;

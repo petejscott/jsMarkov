@@ -1,6 +1,6 @@
 'use strict';
 
-var markovGenerator = (function() {
+var markovGenerator = (function(logger) {
 	
 	function getDictItemByKey(dict, key) {
 		for (var i = 0, len = dict.length; i < len; i++) {
@@ -60,7 +60,7 @@ var markovGenerator = (function() {
 		if (typeof(iteration) === 'undefined') iteration = 0;
 		iteration++;
 		if (iteration > 50) {
-			console.log("maximum iterations exceeded while trying to generate a sentence");
+			logger.logWarning("maximum iterations exceeded while trying to generate a sentence");
 			return ""; //return an empty sentence
 		}
 		
@@ -122,4 +122,4 @@ var markovGenerator = (function() {
 		generateSentences : generateSentences,
 		getRandomWords : getRandomWords };
 
-})();
+})(logger);
