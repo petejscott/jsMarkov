@@ -16,7 +16,7 @@ var markovWordsetBuilder = (function(logger) {
 		var aw = words.split(delimiter);
 		var len = aw.length;
 		if (len > max_words) len = max_words;
-		logger.logInfo("adding words (max of " + len + ")");
+		logger.logDebug("adding words (max of " + len + ")");
 
 		for (var i = 0; i < len; i++) {
 			var word = transformWord(aw[i]);

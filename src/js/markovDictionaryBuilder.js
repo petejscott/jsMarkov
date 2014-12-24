@@ -4,7 +4,7 @@ var markovDictionaryBuilder = (function(logger) {
 
 	function buildDict(wordSet, chainSize) {
 
-		logger.logInfo("building dictionary from " + wordSet.length + " words with a chain size of " + chainSize);
+		logger.logDebug("building dictionary from " + wordSet.length + " words with a chain size of " + chainSize);
 		
 		var map = [];
 		var dict = [];
