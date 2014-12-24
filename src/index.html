@@ -57,7 +57,7 @@
 		flex-direction: column;
 	}
 	input, select { 
-		font-size: 1rem; 
+		font-size: 1em; 
 		font-family: Roboto, sans-serif;
 		font-weight: 300;
 	}
@@ -99,12 +99,12 @@
 	}
 
 	h1, h2 { 
-		font-size: 1.5rem;
+		font-size: 1.5em;
 		margin: 0;
 		padding: 0 0 0.25rem 0;
 		font-weight: 300;
 	}
-	h1 { font-size: 2rem; }
+	h1 { font-size: 2em; }
 
 	section[data-step] {
 		transition: opacity 0.2s;
@@ -112,13 +112,22 @@
 	.disabled { 
 		opacity: 0.1; 
 	}
-	.enabled { opacity: 1; }
+	.enabled { 
+		color: #666;
+		opacity: 1; 
+	}
+	section.current { 
+		color: #111;
+	}
+	.current .workflow-name { 
+		font-weight: 400;
+	}
 
 	label { 
 		display:block; 
 		margin: 1rem 0 0.25rem; 
 		color: #888;
-		font-size: 0.9rem;
+		font-size: 0.9em;
 	}
 	h2 + label { 
 		margin-top: 0;
@@ -150,7 +159,7 @@
   
 	<main>
 
-	  <section data-step="1" class="enabled">
+	  <section data-step="1" class="enabled current">
 		<div class="workflow-name">1</div>
 		<div class="workflow-contents">
 			<h2>Select a source text file</h2>
