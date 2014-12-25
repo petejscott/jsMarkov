@@ -2,7 +2,7 @@
 
 var markovWordsetBuilder = (function(logger) {
 
-	var max_words = 80000;
+	var max_words = 100000;
 
 	function transformWord(word) {
 		word = word.replace("Mr.", "Mr");
