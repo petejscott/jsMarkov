@@ -6,8 +6,10 @@ var markovDictionaryBuilder = (function(logger) {
 
 		logger.logDebug("building dictionary from " + wordSet.length + " words with a chain size of " + chainSize);
 		
-		var map = {};
-		var dict = [];
+		var dict = {};
+		dict.map = {};
+		dict.items = [];
+		
 		for (var i = 0, len = wordSet.length - chainSize; i < len; i++) {
 			
 			var end = i + parseFloat(chainSize); 
@@ -21,13 +23,13 @@ var markovDictionaryBuilder = (function(logger) {
 				'next' : n
 			};
 			
-			var mi = map[dictItem.key];
+			var mi = dict.map[dictItem.key];
 			if (typeof(mi) !== 'number') {
-				var dictIndex = dict.length;
-				dict.push(dictItem);
-				map[dictItem.key] = dictIndex;
+				var dictIndex = dict.items.length;
+				dict.items.push(dictItem);
+				dict.map[dictItem.key] = dictIndex;
 			} else {
-				dict[mi].next.push(dictItem.next[0]);
+				dict.items[mi].next.push(dictItem.next[0]);
 			}
 		}
 		return dict;

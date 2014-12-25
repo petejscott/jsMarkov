@@ -5,35 +5,27 @@ var markovGenerator = (function(logger) {
 	var map = null;
 	
 	function getDictItemByKey(dict, key) {
-		var mi = map[key];
+		var mi = dict.map[key];
 		var match = null;
 		if (typeof(mi) !== 'undefined') {
-			match = dict[mi];
+			match = dict.items[mi];
 		}
 		return match;
 	}
 	
-	function buildMap(dict) {
-		var m = {};
-		for (var i = 0, len = dict.length; i < len; i++) {
-			m[dict[i].key] = i;
-		}
-		return m;
-	}
-	
 	function getRandomWords(dict, regex) {
 		// grab words from dict at random
-		var rWords = dict[Math.floor(Math.random() * dict.length)].words;
+		var rWords = dict.items[Math.floor(Math.random() * dict.items.length)].words;
 		
 		// if a regex was not supplied, we're done. Return the selected words
 		if (regex === null || typeof(regex) === 'undefined') return rWords;
 		
 		// otherwise, iterate until the regex is matched or we opt to give up
-		var iteration = 0, maxIterations = dict.length;
+		var iteration = 0, maxIterations = dict.items.length;
 		while (iteration <= maxIterations) {
 			iteration++;
 			if (regex.test(rWords[0])) return rWords;
-			rWords = dict[Math.floor(Math.random() * dict.length)].words;
+			rWords = dict.items[Math.floor(Math.random() * dict.items.length)].words;
 		}
 		return rWords;
 	}
@@ -41,7 +33,7 @@ var markovGenerator = (function(logger) {
 	function getNextWord(words, dict, opts) {
 		var randomNextWord = null;
 		// get the last N words off the words array
-		var lastWords = words.slice(-1 * dict[0].words.length);
+		var lastWords = words.slice(-1 * dict.items[0].words.length);
 		// get dict item with matching words. 
 		var key = lastWords.join('/').toLowerCase();
 		var match = getDictItemByKey(dict, key);
@@ -58,7 +50,7 @@ var markovGenerator = (function(logger) {
 	function setOptions(dict, opts) {
 		if (opts === null || typeof(opts) === 'undefined') opts = {};
 		// determine chainSize from dictionary
-		var chainSize = dict[0].words.length;
+		var chainSize = dict.items[0].words.length;
 		// if numberOfSentences is not provided, assume 1
 		if (typeof(opts.numberOfSentences) === 'undefined') opts.numberOfSentences = 1;
 		// make sure EOS is set
@@ -116,8 +108,6 @@ var markovGenerator = (function(logger) {
 		if (dict === null || typeof(dict) === 'undefined') {
 			throw "dictionary must be provided";
 		}
-		
-		if (map === null) map = buildMap(dict);
 		
 		// set opts to good values
 		opts = setOptions(dict, opts);
