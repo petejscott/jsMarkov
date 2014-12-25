@@ -3,6 +3,17 @@
 var mString = "The cat in the hat with the bat is a gnat";
 var mWordSet = mString.split(' ');
 
+QUnit.test( "Dictionary is Frozen", function (assert)
+{
+	var chainSize = 2;	
+	var dict = markovDictionaryBuilder.buildDict(mWordSet, chainSize);
+	
+	assert.ok( Object.isFrozen(dict.items) , "dict.items is frozen" );
+	assert.ok( Object.isFrozen(dict.map) , "dict.map is frozen" );
+	assert.ok( Object.isFrozen(dict.items[0]) === false , "dictItem at dict.items[0] is not frozen" );
+	assert.ok( Object.isFrozen(dict.items[0].words) === false , "dictItem.words at dict.items[0] is not frozen" );
+	assert.ok( Object.isFrozen(dict.items[0].next) === false , "dictItem.next at dict.items[0] is not frozen" );
+});
 QUnit.test( "Build Dictionary - Chain Size 1", function( assert ) 
 {	
 	var chainSize = 1;

@@ -32,6 +32,10 @@ var markovDictionaryBuilder = (function(logger) {
 				dict.items[mi].next.push(dictItem.next[0]);
 			}
 		}
+		
+		Object.freeze(dict.map);
+		Object.freeze(dict.items);
+		
 		return dict;
 	}
 
