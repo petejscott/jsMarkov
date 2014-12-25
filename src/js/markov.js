@@ -67,8 +67,6 @@
 		reader.onload = function(e) {
 			sourceText = e.target.result;
 			setCurrentStep(2);
-			// enableStep(2);
-			// disableStep(3);
 		};
 		reader.readAsText(file);
 	} 
@@ -81,7 +79,6 @@
 		{
 			setCurrentStep(2);
 		}
-		// disableStep(3);
 		var chainSizeElement = win.document.querySelector(CONST_MK_CHAINSIZE);
 		chainSize = chainSizeElement.value;		
 		var chainSizeDescription = "";
@@ -124,7 +121,6 @@
 		dictionaryWorker.onmessage = function(e) {
 			if (typeof(e.data.dict) !== 'undefined') {
 				dict = e.data.dict;
-				// enableStep(3);
 				setCurrentStep(3);
 				dictStatus.textContent = "";
 			}
@@ -168,7 +164,7 @@
 		win.document.querySelector(CONST_MK_LOAD)
 			.addEventListener("click", function(e) { setWords(sourceText); });
 
-		// bind change event to number of sentences selection
+		// bind change event to number of sentences selection 
 		win.document.querySelector(CONST_MK_NUMSENTENCES)
 			.addEventListener("input", function(e) { setNumberOfSentences(e); });
 		
@@ -178,8 +174,6 @@
 	}
 
 	function init() {
-		// disableStep(2);
-		// disableStep(3);
 		setCurrentStep(1);
 		readFile(null); // detect any file already set even if the change event hasn't fired
 		setChainSize();
