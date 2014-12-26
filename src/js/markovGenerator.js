@@ -48,15 +48,16 @@ var markovGenerator = (function(logger) {
 	}
 	
 	function setOptions(dict, opts) {
+	
 		if (opts === null || typeof(opts) === 'undefined') opts = {};
-		// determine chainSize from dictionary
-		var chainSize = dict.items[0].words.length;
-		// if numberOfSentences is not provided, assume 1
-		if (typeof(opts.numberOfSentences) === 'undefined') opts.numberOfSentences = 1;
-		// make sure EOS is set
-		if (typeof(opts.endOfSentenceRegex) === 'undefined') opts.endOfSentenceRegex = /[!?.]$/;
-		// provide a default for max number of words per sentence
-		if (typeof(opts.maxWordsPerSentence) === 'undefined') opts.maxWordsPerSentence = 50;
+		
+		opts.numberOfSentences = (typeof(opts.numberOfSentences) === 'undefined') 
+			? 1 : opts.numberOfSentences;
+		opts.endOfSentenceRegex = (typeof(opts.endOfSentenceRegex) === 'undefined') 
+			?  /[!?.]$/ : opts.endOfSentenceRegex;
+		opts.maxWordsPerSentence = (typeof(opts.maxWordsPerSentence) === 'undefined') 
+			?  50 : opts.maxWordsPerSentence;
+			
 		return opts;
 	}
 	
