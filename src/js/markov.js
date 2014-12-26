@@ -22,6 +22,7 @@
 		numberOfSentences : 1
 	};
 
+	//TODO: move this to another object altogether (workflow.js?)
 	function disableStep(element) {
 		if (element === null) return;
 		element.classList.remove("enabled");
@@ -32,6 +33,7 @@
 			inputs[i].disabled = true;
 		}
 	}
+	//TODO: move this to another object altogether (workflow.js?)
 	function enableStep(element) {
 		if (element === null) return;
 		element.classList.remove("disabled");
@@ -42,6 +44,7 @@
 			inputs[i].disabled = false;
 		}
 	}
+	//TODO: move this to another object altogether (workflow.js?)
 	function setCurrentStep(step) {
 		var stepElements = win.document.querySelectorAll("[data-step]");
 		for (var i = 0, len = stepElements.length; i < len; i++) {
@@ -60,6 +63,8 @@
 		}
 	}
 
+	//TODO: ugh. just ugh. tidy up the "reset" of sourceoptions, and make getting the file 
+	// cleaner, and add some bloody error handling beyond "return;"
 	function readFile(e) {
 		markovSourceOptions.sourceText = null;
 		markovSourceOptions.wordSet = null;
@@ -75,7 +80,7 @@
 		};
 		reader.readAsText(file);
 	} 
-	
+	//TODO: too many complaints to enumerate.
 	function setChainSize(e) {	
 		markovSourceOptions.wordSet = null;
 		markovSourceOptions.dict = null;
@@ -104,14 +109,14 @@
 		var selectedChainSizeElement = win.document.querySelector(CONST_MK_SELECTED_CHAINSIZE);
 		selectedChainSizeElement.textContent = "(" + chainSizeDescription + ")";
 	}
-	
+	//TODO: this silly thing shouldn't even be necessary. Maybe abstract range handling somehow.
 	function setNumberOfSentences(e) {
 		var numSentencesElement = win.document.querySelector(CONST_MK_NUMSENTENCES);
 		markovOutputOptions.numberOfSentences = numSentencesElement.value;
 		var selectedNumSentencesElement = win.document.querySelector(CONST_MK_SELECTED_NUMSENTENCES);
 		selectedNumSentencesElement.textContent = "(" + markovOutputOptions.numberOfSentences + ")";
 	}
-
+	//TODO: big pile of ugly.
 	function setWords(source) {
 		markovSourceOptions.wordSet = null;
 		markovSourceOptions.dict = null;
@@ -140,12 +145,12 @@
 			'wordSet' : markovSourceOptions.wordSet,
 			'chainSize' : markovSourceOptions.chainSize});
 	}
-	
+	//TODO: bad function name. and probably a bit of overkill, making this its own function
 	function setOutput(text) {
 		var output = win.document.querySelector(CONST_MK_OUTPUT);
 		output.textContent = text;
 	}
-
+	//TODO again, not seeing a need for a function here (except for keeping "bind" clean).
 	function buildSentence() {
 		var sentences = markovGenerator.generateSentences(markovSourceOptions.dict, markovOutputOptions);
 		setOutput(sentences);
@@ -174,6 +179,8 @@
 			.addEventListener("click", function(e) { buildSentence(); });
 	}
 
+	//TODO: not sure what to do about this, but I'm sure something will occur to me by the time 
+	// everything else is done.
 	function init() {
 		setCurrentStep(1);
 		readFile(null); // detect any file already set even if the change event hasn't fired

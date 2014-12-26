@@ -38,6 +38,7 @@ var markovGenerator = (function(logger) {
 		var key = lastWords.join('/').toLowerCase();
 		var match = getDictItemByKey(dict, key);
 		// if match is null, we've hit a word with nothing to follow. Close it out.
+		// TODO: not sure this is even still possible. can the map ever have undefined values?
 		if (match !== null)
 		{
 			// get a random word from the "next" property on dict item. 
