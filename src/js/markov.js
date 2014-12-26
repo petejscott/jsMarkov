@@ -1,60 +1,136 @@
 'use strict';
 
-; (function(win, logger, UI) {
+; (function(win, logger) {
 
 	var uiElements = {
 		sourceFileInput : "#markovFile",
 		chainSizeInput : "#markovChainSize",
 		chainSizeOutput : "#selectedChainSize",
-		buildDictionaryButton : "#markovLoad",
 		sentenceCountInput : "#markovNumberOfSentences",
 		sentenceCountOutput : "#selectedNumberOfSentences",
-		generateSentenceButton : "#markovSubmit",
+		generateSentenceButton : "#markovGenerate",
 		generateSentenceOutput : "#markovOutput"
 	};
 
 	var markovSourceOptions = {
 		sourceText : null,
 		wordSet : null,
-		chainSize : 0,
-		dict : null
+		chainSize : 1,
+		dict : null,
+		dictBuilder : null
 	};
+	Object.preventExtensions(markovSourceOptions);
+	
 	var markovOutputOptions = {
 		seedPattern : /[A-Z]/,
+		endOfSentenceRegex : /[!?.]$/,
+		maxWordsPerSentence : 50,
 		numberOfSentences : 1
 	};
-
-
-	//TODO: ugh. just ugh. tidy up the "reset" of sourceoptions, and make getting the file 
-	// cleaner, and add some bloody error handling beyond "return;"
-	function readFile(e) {
-		markovSourceOptions.sourceText = null;
-		markovSourceOptions.wordSet = null;
-		markovSourceOptions.dict = null;
-		setOutput("");
+	Object.preventExtensions(markovOutputOptions);
+	
+	function readFile(callback) {
 		var files = win.document.querySelector(uiElements.sourceFileInput).files;
 		if (files === null || files.length === 0) return;
 		var file = files[0];
 		var reader = new FileReader();
 		reader.onload = function(e) {
-			markovSourceOptions.sourceText = e.target.result;
-			UI.workflow.setCurrentStep(2);
+			var text = e.target.result.replace(/[\r\n]/gi, ' ');
+			markovSourceOptions.wordSet = markovWordsetBuilder.addWords(text, ' ');
+			callback();
 		};
 		reader.readAsText(file);
-	} 
-	//TODO: too many complaints to enumerate.
-	function setChainSize(e) {	
-		markovSourceOptions.wordSet = null;
-		markovSourceOptions.dict = null;
-		setOutput("");
-		if (markovSourceOptions.sourceText !== null)
-		{
-			UI.workflow.setCurrentStep(2);
+	}
+	
+	function buildDictionary() {
+		if (markovSourceOptions.wordSet === null) {
+			readFile(function() { buildDictionary() });
+			return;
 		}
-		var chainSizeElement = win.document.querySelector(uiElements.chainSizeInput);
-		markovSourceOptions.chainSize = chainSizeElement.value;		
+		setOutput("Building dictionary...");
+		if (markovSourceOptions.dictBuilder === null || typeof(markovSourceOptions.dictBuilder) === 'undefined') {
+			console.log("creating dictionary worker");
+			markovSourceOptions.dictBuilder = new Worker("js/markovDictionaryWorker.js");
+		}
+		markovSourceOptions.dictBuilder.onmessage = function(e) {
+			if (typeof(e.data.dict) !== 'undefined') {
+				markovSourceOptions.dict = e.data.dict;
+				buildSentences();
+			}
+			if (typeof(e.data.error) !== 'undefined') {
+				setOutput("Sorry, I couldn't build that dictionary (" + e.data.error + ")");
+			}
+		}
+
+		markovSourceOptions.dictBuilder.postMessage({
+			'wordSet' : markovSourceOptions.wordSet,
+			'chainSize' : markovSourceOptions.chainSize});
+	}
+	
+	function buildSentences() {
+		if (markovSourceOptions.dict === null) return;
+		var sentences = markovGenerator.generateSentences(markovSourceOptions.dict, markovOutputOptions);
+		setOutput(sentences, true);
+	}
+
+	//TODO: bad function name. and probably a bit of overkill, making this its own function
+	function setOutput(text, showGenerateOption) {
+		var output = win.document.querySelector(uiElements.generateSentenceOutput);
+		output.textContent = text;
+		if (showGenerateOption) { 
+			win.document.querySelector(uiElements.generateSentenceButton).classList.remove("hidden");
+		} else {
+			win.document.querySelector(uiElements.generateSentenceButton).classList.add("hidden");
+		}
+	}
+
+	
+	function bind() {
+	
+		win.document.querySelector(uiElements.sourceFileInput)
+			.addEventListener("change", function(e) { 
+				markovSourceOptions.wordSet = null;
+				buildDictionary();
+			});
+		
+		win.document.querySelector(uiElements.chainSizeInput)
+			.addEventListener("input", function(e) {
+				setChainSizeDescription();
+			});
+			
+		win.document.querySelector(uiElements.chainSizeInput)
+			.addEventListener("change", function(e) { 
+				var val = e.currentTarget.value;
+				markovSourceOptions.chainSize = val;
+				setChainSizeDescription();
+				buildDictionary() 
+			}); // this function (minus buildDictionary) also needs to run at init
+		
+		win.document.querySelector(uiElements.sentenceCountInput)
+			.addEventListener("input", function(e) {
+				setSentenceCountDescription();
+			});
+			
+		win.document.querySelector(uiElements.sentenceCountInput)
+			.addEventListener("change", function(e) { 
+				var val = e.currentTarget.value;
+				markovOutputOptions.numberOfSentences = val;
+				setSentenceCountDescription();
+				buildSentences();
+			}); // this function (minus buildSentences) also needs to run at init
+		
+		win.document.querySelector(uiElements.generateSentenceButton)
+			.addEventListener("click", function(e) {
+				buildSentences();
+				e.preventDefault();
+			});
+	}
+	
+	function setChainSizeDescription()
+	{
+		var chainSize = win.document.querySelector(uiElements.chainSizeInput).value;
 		var chainSizeDescription = "";
-		switch (markovSourceOptions.chainSize) {
+		switch (chainSize) {
 			case "1":
 				chainSizeDescription = "rather nonsensical";
 				break;
@@ -69,88 +145,28 @@
 				break;
 		}
 		var selectedChainSizeElement = win.document.querySelector(uiElements.chainSizeOutput);
-		selectedChainSizeElement.textContent = "(" + chainSizeDescription + ")";
+		selectedChainSizeElement.textContent = "(" + chainSizeDescription + ")"; 
 	}
-	//TODO: this silly thing shouldn't even be necessary. Maybe abstract range handling somehow.
-	function setNumberOfSentences(e) {
-		var numSentencesElement = win.document.querySelector(uiElements.sentenceCountInput);
-		markovOutputOptions.numberOfSentences = numSentencesElement.value;
+	
+	function setSentenceCountDescription()
+	{
 		var selectedNumSentencesElement = win.document.querySelector(uiElements.sentenceCountOutput);
 		selectedNumSentencesElement.textContent = "(" + markovOutputOptions.numberOfSentences + ")";
 	}
-	//TODO: big pile of ugly.
-	function setWords(source) {
-		markovSourceOptions.wordSet = null;
-		markovSourceOptions.dict = null;
-		setOutput("");
-		setChainSize(null);
-		var dictStatus = win.document.querySelector(".dictStatus");
-		dictStatus.textContent = "Building...";
-		var text = source.replace(/[\r\n]/gi, ' ');
-		var el = win.document.querySelector("#source");
-		markovSourceOptions.wordSet = markovWordsetBuilder.addWords(text, ' ');
-		var dictionaryWorker = new Worker("js/markovDictionaryWorker.js");
-		dictionaryWorker.onmessage = function(e) {
-			if (typeof(e.data.dict) !== 'undefined') {
-				markovSourceOptions.dict = e.data.dict;
-				UI.workflow.setCurrentStep(3);
-				dictStatus.textContent = "";
-			}
-			if (typeof(e.data.error) !== 'undefined') {
-				dictStatus.textContent = "Build failed!";
-				alert("Sorry, I couldn't build that dictionary (" + e.data.error + ")");
-			}
-			dictionaryWorker.terminate();
-		}
-
-		dictionaryWorker.postMessage({
-			'wordSet' : markovSourceOptions.wordSet,
-			'chainSize' : markovSourceOptions.chainSize});
-	}
-	//TODO: bad function name. and probably a bit of overkill, making this its own function
-	function setOutput(text) {
-		var output = win.document.querySelector(uiElements.generateSentenceOutput);
-		output.textContent = text;
-	}
-	//TODO again, not seeing a need for a function here (except for keeping "bind" clean).
-	function buildSentence() {
-		var sentences = markovGenerator.generateSentences(markovSourceOptions.dict, markovOutputOptions);
-		setOutput(sentences);
-	} 
-
-	function bind() {
-
-		// bind change event to file input
-		win.document.querySelector(uiElements.sourceFileInput)
-			.addEventListener("change", readFile);
-		
-		// bind change event to chain size selection
-		win.document.querySelector(uiElements.chainSizeInput)
-			.addEventListener("input", setChainSize);
-		
-		// bind click event to build dictionary button
-		win.document.querySelector(uiElements.buildDictionaryButton)
-			.addEventListener("click", function(e) { setWords(markovSourceOptions.sourceText); });
-
-		// bind change event to number of sentences selection 
-		win.document.querySelector(uiElements.sentenceCountInput)
-			.addEventListener("input", setNumberOfSentences);
-		
-		// bind click event to generate sentence button	
-		win.document.querySelector(uiElements.generateSentenceButton)
-			.addEventListener("click", buildSentence);
-	}
-
-	//TODO: not sure what to do about this, but I'm sure something will occur to me by the time 
-	// everything else is done.
+	
 	function init() {
-		UI.workflow.setCurrentStep(1);
-		readFile(null); // detect any file already set even if the change event hasn't fired
-		setChainSize();
-		setNumberOfSentences();
+		
+		// set the source/output options to match the values set in the DOM
+		markovSourceOptions.chainSize = win.document.querySelector(uiElements.chainSizeInput).value;
+		markovOutputOptions.numberOfSentences = win.document.querySelector(uiElements.sentenceCountInput).value;
+		
+		setSentenceCountDescription();
+		setChainSizeDescription();
+		
+		bind();
+		buildDictionary();
 	}
 
-	bind();
 	init();
 
-})(this, logger, UI);
+})(this, logger);

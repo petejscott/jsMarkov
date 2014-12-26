@@ -23,32 +23,11 @@
 			local('Roboto-Regular'), 
 			url(fonts/Roboto-Regular.woff) format('woff');
 	}
-	@media screen and (min-width: 480px) {	
-		body main {
-			width: 80vw;
-		}
-	}
-	@media screen and (min-width: 800px) {
-		html { font-size: 16px !important; }
-		body main { 
-			width: 60vw;
-		}
-	}
-	@media screen and (min-width: 1024px) {
-		body main {
-			width: 80vw;
+	@media screen and (min-width: 800px) {	
+		body .main {
 			flex-direction: row;
-			justify-content: space-between;
+			justify-content: space-around;
 		}
-		body section#markovOutput {
-			text-align: left;
-			max-width: 30rem;
-		}
-	}
-	
-	html { 
-		font-size: 14px; 
-		transition: font-size 0.25s;
 	}
 
 	header { 
@@ -91,36 +70,24 @@
 		margin: 0 auto;
 		transition: all 0.2s;
 		flex: 1 0 auto;	  
-		width: 96vw;
-		font-size: 0.9rem;
+		width: 92vw;
+		font-size: 1rem;
 		
 		display: flex;
 		flex-direction: column;
-		align-items: stretch;
 		justify-content: flex-start;
+		align-items: stretch;
+		align-content: stretch;
 	}
 
 	section {
-		padding: 0 0.5rem; 
-		transition: all 0.25s;
-
-		display: flex;
-		align-items: center;
+		padding: 0; 
 		padding-bottom: 1rem;
 		margin-top: 1rem;
-		border-bottom: 1px solid #ccc;
+		border-bottom: 1px solid #ddd;
 	}
-
-	.workflow-name { 
-		font-size: 3rem;
-		margin: 0 2rem 0 0.5rem;
-	}
-
-	section#markovOutput { 
-		text-align: center;
-		font-size: 1.5rem;
-		border-bottom-width: 0;
-		align-self: center;
+	section:last-child {
+		border-bottom: 0;
 	}
 
 	h1, h2 { 
@@ -131,31 +98,11 @@
 	}
 	h1 { font-size: 2em; }
 
-	section[data-step] {
-		transition: opacity 0.2s;
-	}
-	.disabled { 
-		opacity: 0.1; 
-	}
-	.enabled { 
-		color: #666;
-		opacity: 1; 
-	}
-	section.current { 
-		color: #111;
-	}
-	.current .workflow-name { 
-		font-weight: 400;
-	}
-
 	label { 
 		display:block; 
 		margin: 1rem 0 0.25rem; 
 		color: #888;
 		font-size: 0.9em;
-	}
-	h2 + label { 
-		margin-top: 0;
 	}
 
 	#selectedChainSize,
@@ -173,6 +120,8 @@
 		font-size: 1rem;
 		font-weight: 300;
 	}
+	
+	.hidden { display: none; }
 
 	</style>
 </head>
@@ -184,52 +133,24 @@
   
 	<main>
 	
-		<div class="steps-container">
-		  <section data-step="1" class="enabled current">
-			<div class="workflow-name">1</div>
-			<div class="workflow-contents">
-				<h2>Select a source text file</h2>
-				<!--
-				<label for="markovFileChooser">Choose from the following list</label>
-				<select id="markovFileChooser">
-					<option>My Man Jeeves, by P.G. Wodehouse</option>
-					<option>XYZ</option>
-				</select>
-				<input type="button" value="Select" id="markovFileChooserSelector" />
-				-->
-				<label for="markovFile">Select a source file</label>
-				<input id="markovFile" type="file" accept="text/plain" required="required"> 			
-			</div>
-		  </section>
-		  
-			<section data-step="2" class="disabled">
-				<div class="workflow-name">2</div>
-				<div class="workflow-contents">	 
-					<h2>Build the Dictionary</h2>
-
-					<label for="markovChainSize">Select a chain size <span id="selectedChainSize"></span></label>
-					<input type="range" id="markovChainSize" min="1" max="4" value="2" />
-
-					<label for="markovLoad">Then build the dictionary</label>
-					<input type="button" value="Build Dictionary" id="markovLoad" /> <span class="dictStatus"></span>
-				</div>
-			</section>
-		  
-			<section data-step="3" class="disabled">
-				<div class="workflow-name">3</div>
-				<div class="workflow-contents">
-					<h2>Generate Sentence</h2>
-					
-					<label for="markovNumberOfSentences">Number of sentences <span id="selectedNumberOfSentences"></span></label>
-					<input type="range" id="markovNumberOfSentences" min="1" max="20" value="2" />
-					
-					<label for="markovSubmit">Ready? Let's get to it!</label>
-					<input type="submit" value="Generate!" id="markovSubmit" />
-				</div>
-			</section>
-		</div>
-	  
-		<section id="markovOutput"></section>
+		  <section class="markovInput">
+			<h2>Input</h2>
+			
+			<label for="markovFile">Select a source file</label>
+			<input id="markovFile" type="file" accept="text/plain" required="required">
+			
+			<label for="markovChainSize">Select a chain size <span id="selectedChainSize"></span></label>
+			<input type="range" id="markovChainSize" min="1" max="4" value="2" />			
+		</section>
+		
+		<section class="markovOutput">
+			<h2>Output</h2>
+			<label for="markovNumberOfSentences">Number of sentences <span id="selectedNumberOfSentences"></span></label>
+			<input type="range" id="markovNumberOfSentences" min="1" max="20" value="2" />
+			
+			<p id="markovOutput"></p>
+			<p><a href="#" id="markovGenerate" class="hidden">Generate another!</a></p>
+		</section>
 
 	</main>
   
@@ -238,7 +159,6 @@
 		<p>You might want to play with these: <a href="../test/markov_source/chekhov_1.txt">The Lady With The Dog and Other Stories (Anton Chekhov)</a>, <a href="../test/markov_source/grimmsfairytales.txt">Grimms' Fairy Tales (Brothers Grimm)</a>, <a href="../test/markov_source/mymanjeeves.txt">My Man Jeeves (P.G. Wodehouse)</a>, <a href="../test/markov_source/ulysses.txt">Ulysses (James Joyce)</a></p>
 	</footer>
 
-	<script src="js/UI.workflow.js"></script>
 	<script src="js/markovWordsetBuilder.js"></script>
 	<script src="js/markovGenerator.js"></script>
 	<script src="js/markov.js"></script>
