@@ -13,7 +13,6 @@
 	};
 
 	var markovSourceOptions = {
-		sourceText : null,
 		wordSet : null,
 		chainSize : 1,
 		dict : null,
