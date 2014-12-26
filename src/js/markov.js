@@ -11,11 +11,16 @@
 	var CONST_MK_NUMSENTENCES = "#markovNumberOfSentences";
 	var CONST_MK_SELECTED_NUMSENTENCES = "#selectedNumberOfSentences";
 
-	var sourceText = null;
-	var chainSize = 0;
-	var numberOfSentences = 1;
-	var dict = null;
-	var wordSet = null;
+	var markovSourceOptions = {
+		sourceText : null,
+		wordSet : null,
+		chainSize : 0,
+		dict : null
+	};
+	var markovOutputOptions = {
+		seedPattern : /[A-Z]/,
+		numberOfSentences : 1
+	};
 
 	function disableStep(element) {
 		if (element === null) return;
@@ -56,33 +61,33 @@
 	}
 
 	function readFile(e) {
-		sourceText = null;
-		wordSet = null;
-		dict = null;
+		markovSourceOptions.sourceText = null;
+		markovSourceOptions.wordSet = null;
+		markovSourceOptions.dict = null;
 		setOutput("");
 		var files = win.document.querySelector(CONST_MK_INPUT).files;
 		if (files === null || files.length === 0) return;
 		var file = files[0];
 		var reader = new FileReader();
 		reader.onload = function(e) {
-			sourceText = e.target.result;
+			markovSourceOptions.sourceText = e.target.result;
 			setCurrentStep(2);
 		};
 		reader.readAsText(file);
 	} 
 	
 	function setChainSize(e) {	
-		wordSet = null;
-		dict = null;
+		markovSourceOptions.wordSet = null;
+		markovSourceOptions.dict = null;
 		setOutput("");
-		if (sourceText !== null)
+		if (markovSourceOptions.sourceText !== null)
 		{
 			setCurrentStep(2);
 		}
 		var chainSizeElement = win.document.querySelector(CONST_MK_CHAINSIZE);
-		chainSize = chainSizeElement.value;		
+		markovSourceOptions.chainSize = chainSizeElement.value;		
 		var chainSizeDescription = "";
-		switch (chainSize) {
+		switch (markovSourceOptions.chainSize) {
 			case "1":
 				chainSizeDescription = "rather nonsensical";
 				break;
@@ -102,25 +107,25 @@
 	
 	function setNumberOfSentences(e) {
 		var numSentencesElement = win.document.querySelector(CONST_MK_NUMSENTENCES);
-		numberOfSentences = numSentencesElement.value;
+		markovOutputOptions.numberOfSentences = numSentencesElement.value;
 		var selectedNumSentencesElement = win.document.querySelector(CONST_MK_SELECTED_NUMSENTENCES);
-		selectedNumSentencesElement.textContent = "(" + numberOfSentences + ")";
+		selectedNumSentencesElement.textContent = "(" + markovOutputOptions.numberOfSentences + ")";
 	}
 
 	function setWords(source) {
-		wordSet = null;
-		dict = null;
+		markovSourceOptions.wordSet = null;
+		markovSourceOptions.dict = null;
 		setOutput("");
 		setChainSize(null);
 		var dictStatus = win.document.querySelector(".dictStatus");
 		dictStatus.textContent = "Building...";
 		var text = source.replace(/[\r\n]/gi, ' ');
 		var el = win.document.querySelector("#source");
-		wordSet = markovWordsetBuilder.addWords(text, ' ');
+		markovSourceOptions.wordSet = markovWordsetBuilder.addWords(text, ' ');
 		var dictionaryWorker = new Worker("js/markovDictionaryWorker.js");
 		dictionaryWorker.onmessage = function(e) {
 			if (typeof(e.data.dict) !== 'undefined') {
-				dict = e.data.dict;
+				markovSourceOptions.dict = e.data.dict;
 				setCurrentStep(3);
 				dictStatus.textContent = "";
 			}
@@ -132,8 +137,8 @@
 		}
 
 		dictionaryWorker.postMessage({
-			'wordSet' : wordSet,
-			'chainSize' : chainSize});
+			'wordSet' : markovSourceOptions.wordSet,
+			'chainSize' : markovSourceOptions.chainSize});
 	}
 	
 	function setOutput(text) {
@@ -142,11 +147,7 @@
 	}
 
 	function buildSentence() {
-		var opts = {
-			'seedPattern' : /[A-Z]/,
-			'numberOfSentences' : numberOfSentences
-		};
-		var sentences = markovGenerator.generateSentences(dict, opts);
+		var sentences = markovGenerator.generateSentences(markovSourceOptions.dict, markovOutputOptions);
 		setOutput(sentences);
 	} 
 
@@ -155,14 +156,14 @@
 		// bind change event to file input
 		win.document.querySelector(CONST_MK_INPUT)
 			.addEventListener("change", function(e) { readFile(e); });
-
+		
 		// bind change event to chain size selection
 		win.document.querySelector(CONST_MK_CHAINSIZE)
 			.addEventListener("input", function(e) { setChainSize(e); });
 		
 		// bind click event to build dictionary button
 		win.document.querySelector(CONST_MK_LOAD)
-			.addEventListener("click", function(e) { setWords(sourceText); });
+			.addEventListener("click", function(e) { setWords(markovSourceOptions.sourceText); });
 
 		// bind change event to number of sentences selection 
 		win.document.querySelector(CONST_MK_NUMSENTENCES)
