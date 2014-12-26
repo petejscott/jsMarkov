@@ -1,15 +1,17 @@
 'use strict';
 
-; (function(win, logger) {
+; (function(win, logger, UI) {
 
-	var CONST_MK_INPUT = "#markovFile";
-	var CONST_MK_CHAINSIZE = "#markovChainSize";
-	var CONST_MK_SELECTED_CHAINSIZE = "#selectedChainSize";
-	var CONST_MK_LOAD = "#markovLoad";
-	var CONST_MK_SUBMIT = "#markovSubmit";
-	var CONST_MK_OUTPUT = "#markovOutput";
-	var CONST_MK_NUMSENTENCES = "#markovNumberOfSentences";
-	var CONST_MK_SELECTED_NUMSENTENCES = "#selectedNumberOfSentences";
+	var uiElements = {
+		sourceFileInput : "#markovFile",
+		chainSizeInput : "#markovChainSize",
+		chainSizeOutput : "#selectedChainSize",
+		buildDictionaryButton : "#markovLoad",
+		sentenceCountInput : "#markovNumberOfSentences",
+		sentenceCountOutput : "#selectedNumberOfSentences",
+		generateSentenceButton : "#markovSubmit",
+		generateSentenceOutput : "#markovOutput"
+	};
 
 	var markovSourceOptions = {
 		sourceText : null,
@@ -22,46 +24,6 @@
 		numberOfSentences : 1
 	};
 
-	//TODO: move this to another object altogether (workflow.js?)
-	function disableStep(element) {
-		if (element === null) return;
-		element.classList.remove("enabled");
-		element.classList.remove("current");
-		element.classList.add("disabled");
-		var inputs = element.querySelectorAll("input");
-		for (var i = 0, len = inputs.length; i < len; i++) {
-			inputs[i].disabled = true;
-		}
-	}
-	//TODO: move this to another object altogether (workflow.js?)
-	function enableStep(element) {
-		if (element === null) return;
-		element.classList.remove("disabled");
-		element.classList.remove("current");
-		element.classList.add("enabled");
-		var inputs = element.querySelectorAll("input");
-		for (var i = 0, len = inputs.length; i < len; i++) {
-			inputs[i].disabled = false;
-		}
-	}
-	//TODO: move this to another object altogether (workflow.js?)
-	function setCurrentStep(step) {
-		var stepElements = win.document.querySelectorAll("[data-step]");
-		for (var i = 0, len = stepElements.length; i < len; i++) {
-			var stepElement = stepElements[i];
-			var currentElementStep = parseFloat(stepElement.getAttribute("data-step"));
-			if (currentElementStep < step) {
-				enableStep(stepElement);
-			}
-			else if (currentElementStep === step) {
-				enableStep(stepElement);
-				stepElement.classList.add("current");
-			}
-			else if (currentElementStep > step) {
-				disableStep(stepElement);
-			}
-		}
-	}
 
 	//TODO: ugh. just ugh. tidy up the "reset" of sourceoptions, and make getting the file 
 	// cleaner, and add some bloody error handling beyond "return;"
@@ -70,13 +32,13 @@
 		markovSourceOptions.wordSet = null;
 		markovSourceOptions.dict = null;
 		setOutput("");
-		var files = win.document.querySelector(CONST_MK_INPUT).files;
+		var files = win.document.querySelector(uiElements.sourceFileInput).files;
 		if (files === null || files.length === 0) return;
 		var file = files[0];
 		var reader = new FileReader();
 		reader.onload = function(e) {
 			markovSourceOptions.sourceText = e.target.result;
-			setCurrentStep(2);
+			UI.workflow.setCurrentStep(2);
 		};
 		reader.readAsText(file);
 	} 
@@ -87,9 +49,9 @@
 		setOutput("");
 		if (markovSourceOptions.sourceText !== null)
 		{
-			setCurrentStep(2);
+			UI.workflow.setCurrentStep(2);
 		}
-		var chainSizeElement = win.document.querySelector(CONST_MK_CHAINSIZE);
+		var chainSizeElement = win.document.querySelector(uiElements.chainSizeInput);
 		markovSourceOptions.chainSize = chainSizeElement.value;		
 		var chainSizeDescription = "";
 		switch (markovSourceOptions.chainSize) {
@@ -106,14 +68,14 @@
 				chainSizeDescription = "mostly sensible";
 				break;
 		}
-		var selectedChainSizeElement = win.document.querySelector(CONST_MK_SELECTED_CHAINSIZE);
+		var selectedChainSizeElement = win.document.querySelector(uiElements.chainSizeOutput);
 		selectedChainSizeElement.textContent = "(" + chainSizeDescription + ")";
 	}
 	//TODO: this silly thing shouldn't even be necessary. Maybe abstract range handling somehow.
 	function setNumberOfSentences(e) {
-		var numSentencesElement = win.document.querySelector(CONST_MK_NUMSENTENCES);
+		var numSentencesElement = win.document.querySelector(uiElements.sentenceCountInput);
 		markovOutputOptions.numberOfSentences = numSentencesElement.value;
-		var selectedNumSentencesElement = win.document.querySelector(CONST_MK_SELECTED_NUMSENTENCES);
+		var selectedNumSentencesElement = win.document.querySelector(uiElements.sentenceCountOutput);
 		selectedNumSentencesElement.textContent = "(" + markovOutputOptions.numberOfSentences + ")";
 	}
 	//TODO: big pile of ugly.
@@ -131,7 +93,7 @@
 		dictionaryWorker.onmessage = function(e) {
 			if (typeof(e.data.dict) !== 'undefined') {
 				markovSourceOptions.dict = e.data.dict;
-				setCurrentStep(3);
+				UI.workflow.setCurrentStep(3);
 				dictStatus.textContent = "";
 			}
 			if (typeof(e.data.error) !== 'undefined') {
@@ -147,7 +109,7 @@
 	}
 	//TODO: bad function name. and probably a bit of overkill, making this its own function
 	function setOutput(text) {
-		var output = win.document.querySelector(CONST_MK_OUTPUT);
+		var output = win.document.querySelector(uiElements.generateSentenceOutput);
 		output.textContent = text;
 	}
 	//TODO again, not seeing a need for a function here (except for keeping "bind" clean).
@@ -159,30 +121,30 @@
 	function bind() {
 
 		// bind change event to file input
-		win.document.querySelector(CONST_MK_INPUT)
-			.addEventListener("change", function(e) { readFile(e); });
+		win.document.querySelector(uiElements.sourceFileInput)
+			.addEventListener("change", readFile);
 		
 		// bind change event to chain size selection
-		win.document.querySelector(CONST_MK_CHAINSIZE)
-			.addEventListener("input", function(e) { setChainSize(e); });
+		win.document.querySelector(uiElements.chainSizeInput)
+			.addEventListener("input", setChainSize);
 		
 		// bind click event to build dictionary button
-		win.document.querySelector(CONST_MK_LOAD)
+		win.document.querySelector(uiElements.buildDictionaryButton)
 			.addEventListener("click", function(e) { setWords(markovSourceOptions.sourceText); });
 
 		// bind change event to number of sentences selection 
-		win.document.querySelector(CONST_MK_NUMSENTENCES)
-			.addEventListener("input", function(e) { setNumberOfSentences(e); });
+		win.document.querySelector(uiElements.sentenceCountInput)
+			.addEventListener("input", setNumberOfSentences);
 		
 		// bind click event to generate sentence button	
-		win.document.querySelector(CONST_MK_SUBMIT)
-			.addEventListener("click", function(e) { buildSentence(); });
+		win.document.querySelector(uiElements.generateSentenceButton)
+			.addEventListener("click", buildSentence);
 	}
 
 	//TODO: not sure what to do about this, but I'm sure something will occur to me by the time 
 	// everything else is done.
 	function init() {
-		setCurrentStep(1);
+		UI.workflow.setCurrentStep(1);
 		readFile(null); // detect any file already set even if the change event hasn't fired
 		setChainSize();
 		setNumberOfSentences();
@@ -191,4 +153,4 @@
 	bind();
 	init();
 
-})(this, logger);
+})(this, logger, UI);
