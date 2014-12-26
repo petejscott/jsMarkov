@@ -6,9 +6,23 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
 	<title>jsMarkov</title>
 	<script src="js/logger.js"></script>
-	<script src="js/markovDictionaryWorker.js"></script>
-	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 	<style>
+	@font-face {
+		font-family: 'Roboto';
+		font-style: normal;
+		font-weight: 300;
+		src: local('Roboto Light'), 
+			local('Roboto-Light'), 
+			url(fonts/Roboto-Light.woff) format('woff');
+	}
+	@font-face {
+		font-family: 'Roboto';
+		font-style: normal;
+		font-weight: 400;
+		src: local('Roboto Regular'), 
+			local('Roboto-Regular'), 
+			url(fonts/Roboto-Regular.woff) format('woff');
+	}
 	@media screen and (min-width: 480px) {	
 		body main {
 			width: 80vw;
@@ -225,7 +239,6 @@
 	</footer>
 
 	<script src="js/markovWordsetBuilder.js"></script>
-	<script src="js/markovDictionaryBuilder.js"></script>
 	<script src="js/markovGenerator.js"></script>
 	<script src="js/markov.js"></script>
 </body>
