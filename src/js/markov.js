@@ -1,7 +1,7 @@
 'use strict';
 
 ; (function(win, logger) {
-
+	
 	var uiElements = {
 		sourceFileInput : "#markovFile",
 		chainSizeInput : "#markovChainSize",
@@ -16,7 +16,8 @@
 		wordSet : null,
 		chainSize : 1,
 		dict : null,
-		dictBuilder : null
+		dictBuilder : null,
+		buildingDictionary : false
 	};
 	Object.preventExtensions(markovSourceOptions);
 	
@@ -46,17 +47,21 @@
 			readFile(function() { buildDictionary() });
 			return;
 		}
+		markovSourceOptions.buildingDictionary = true;
 		setOutput("Building dictionary...");
 		if (markovSourceOptions.dictBuilder === null || typeof(markovSourceOptions.dictBuilder) === 'undefined') {
 			console.log("creating dictionary worker");
 			markovSourceOptions.dictBuilder = new Worker("js/markovDictionaryWorker.js");
 		}
+		
 		markovSourceOptions.dictBuilder.onmessage = function(e) {
+			markovSourceOptions.buildingDictionary = false;
+			logger.logDebug("received a response from the dictBuilder");
 			if (typeof(e.data.dict) !== 'undefined') {
 				markovSourceOptions.dict = e.data.dict;
 				buildSentences();
 			}
-			if (typeof(e.data.error) !== 'undefined') {
+			else if (typeof(e.data.error) !== 'undefined') {
 				setOutput("Sorry, I couldn't build that dictionary (" + e.data.error + ")");
 			}
 		}
@@ -72,7 +77,6 @@
 		setOutput(sentences, true);
 	}
 
-	//TODO: bad function name. and probably a bit of overkill, making this its own function
 	function setOutput(text, showGenerateOption) {
 		var output = win.document.querySelector(uiElements.generateSentenceOutput);
 		output.textContent = text;
@@ -102,8 +106,13 @@
 				var val = e.currentTarget.value;
 				markovSourceOptions.chainSize = val;
 				setChainSizeDescription();
-				buildDictionary() 
-			}); // this function (minus buildDictionary) also needs to run at init
+				if (markovSourceOptions.buildingDictionary) {
+					markovSourceOptions.dictBuilder.terminate();
+					markovSourceOptions.dictBuilder = null;
+					logger.logDebug("terminated and unset the dictBuilder");
+				}
+				buildDictionary();
+			});
 		
 		win.document.querySelector(uiElements.sentenceCountInput)
 			.addEventListener("input", function(e) {
@@ -116,7 +125,7 @@
 				markovOutputOptions.numberOfSentences = val;
 				setSentenceCountDescription();
 				buildSentences();
-			}); // this function (minus buildSentences) also needs to run at init
+			});
 		
 		win.document.querySelector(uiElements.generateSentenceButton)
 			.addEventListener("click", function(e) {
