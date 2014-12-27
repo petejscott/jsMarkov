@@ -30,27 +30,40 @@
 	Object.preventExtensions(markovOutputOptions);
 	
 	function readFile(callback) {
-		var files = win.document.querySelector(uiElements.sourceFileInput).files;
-		if (files === null || files.length === 0) return;
-		var file = files[0];
-		var reader = new FileReader();
-		reader.onload = function(e) {
-			var text = e.target.result.replace(/[\r\n]/gi, ' ');
-			markovSourceOptions.wordSet = markovWordsetBuilder.addWords(text, ' ');
-			callback();
-		};
-		reader.readAsText(file);
+		var fileElement = win.document.querySelector(uiElements.sourceFileInput);
+		var files = fileElement.files;
+		
+		var processedCount=0;
+		var totalFiles = files.length;
+		
+		for (var i = 0; i < totalFiles; i++)
+		{
+			var file = files[i];
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				var text = e.target.result.replace(/[\r\n]/gi, ' ');
+				markovSourceOptions.wordSet = markovWordsetBuilder.addWords(text, ' ');
+				logger.logDebug("added words for file " + i + " of " + totalFiles + " files. Wordset contains " + markovSourceOptions.wordSet.length + " words.");
+			};
+			reader.onloadend = function(e) {
+				processedCount++;
+				logger.logDebug("finished processing file " + processedCount + " of " + totalFiles);
+				if (processedCount === totalFiles) callback();
+			};
+			reader.readAsText(file);
+		}	
 	}
 	
 	function buildDictionary() {
 		if (markovSourceOptions.wordSet === null) {
-			readFile(function() { buildDictionary() });
+			readFile(buildDictionary);
 			return;
 		}
+		
 		markovSourceOptions.buildingDictionary = true;
 		setOutput("Building dictionary...");
 		if (markovSourceOptions.dictBuilder === null || typeof(markovSourceOptions.dictBuilder) === 'undefined') {
-			console.log("creating dictionary worker");
+			logger.logDebug("creating dictionary worker");
 			markovSourceOptions.dictBuilder = new Worker("js/markovDictionaryWorker.js");
 		}
 		

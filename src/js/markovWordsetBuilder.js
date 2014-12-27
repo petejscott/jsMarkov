@@ -2,29 +2,38 @@
 
 var markovWordsetBuilder = (function(logger) {
 
-	var max_words = 100000;
-
+	var wordSet = [];
+	
 	function transformWord(word) {
 		word = word.replace("Mr.", "Mr");
 		word = word.replace("Mrs.", "Mrs");
 		return word.replace(/[^A-Za-z0-9\s\.\!\?\'\,\—\-]/gi, '');
 	}
+	
+	function clearWords() {
+		wordSet = [];
+	}
 
 	function addWords(words, delimiter) {
-		var wordSet = [];
-
+		
 		var aw = words.split(delimiter);
 		var len = aw.length;
-		if (len > max_words) len = max_words;
-		logger.logDebug("adding words (max of " + len + ")");
-
+		
+		var wordsIncluded = 0;
 		for (var i = 0; i < len; i++) {
 			var word = transformWord(aw[i]);
-			if (word.length > 0) wordSet.push(word);
+			if (word.length > 0) {
+				wordSet.push(word);
+				wordsIncluded++;
+			}
 		}
+		
+		logger.logDebug("added " + wordsIncluded + " out of " + len + " words to wordSet");
 		return wordSet;
 	}
 
-	return { addWords : addWords } 
+	return { 
+		addWords : addWords, 
+		clearWords : clearWords } ;
 	
 })(logger);
