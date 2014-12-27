@@ -106,6 +106,7 @@
 		win.document.querySelector(uiElements.sourceFileInput)
 			.addEventListener("change", function(e) { 
 				markovSourceOptions.wordSet = null;
+				markovWordsetBuilder.clearWords();
 				buildDictionary();
 			});
 		
