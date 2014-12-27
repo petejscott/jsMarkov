@@ -112,7 +112,7 @@
 		
 		win.document.querySelector(uiElements.chainSizeInput)
 			.addEventListener("input", function(e) {
-				setChainSizeDescription();
+				setChainSizeDescription(e.currentTarget.value);
 			});
 			
 		win.document.querySelector(uiElements.chainSizeInput)
@@ -130,7 +130,7 @@
 		
 		win.document.querySelector(uiElements.sentenceCountInput)
 			.addEventListener("input", function(e) {
-				setSentenceCountDescription();
+				setSentenceCountDescription(e.currentTarget.value);
 			});
 			
 		win.document.querySelector(uiElements.sentenceCountInput)
@@ -148,9 +148,11 @@
 			});
 	}
 	
-	function setChainSizeDescription()
+	function setChainSizeDescription(chainSize)
 	{
-		var chainSize = win.document.querySelector(uiElements.chainSizeInput).value;
+		if (!chainSize) {
+			chainSize = win.document.querySelector(uiElements.chainSizeInput).value;
+		}
 		var chainSizeDescription = "";
 		switch (chainSize) {
 			case "1":
@@ -170,10 +172,13 @@
 		selectedChainSizeElement.textContent = "(" + chainSizeDescription + ")"; 
 	}
 	
-	function setSentenceCountDescription()
+	function setSentenceCountDescription(numSentences)
 	{
+		if (!numSentences) {
+			numSentences = win.document.querySelector(uiElements.sentenceCountInput).value;
+		}
 		var selectedNumSentencesElement = win.document.querySelector(uiElements.sentenceCountOutput);
-		selectedNumSentencesElement.textContent = "(" + markovOutputOptions.numberOfSentences + ")";
+		selectedNumSentencesElement.textContent = "(" + numSentences + ")";
 	}
 	
 	function init() {
