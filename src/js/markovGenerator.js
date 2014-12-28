@@ -24,7 +24,13 @@ var markovGenerator = (function(logger) {
 		var iteration = 0, maxIterations = dict.items.length;
 		while (iteration <= maxIterations) {
 			iteration++;
-			if (regex.test(rWords[0])) return rWords;
+			if (regex.test(rWords[0]) && regex.test(rWords.join(" "))) {
+				logger.logDebug("Seed PASSED test: *" + rWords[0] + "* passed and *" + rWords.join(" ") + "* passed");
+				return rWords;
+			}
+			else {
+				logger.logDebug("Seed FAILED test: *" + rWords[0] + "* failed or *" + rWords.join(" ") + "* failed");
+			}
 			rWords = dict.items[Math.floor(Math.random() * dict.items.length)].words;
 		}
 		return rWords;
@@ -54,10 +60,10 @@ var markovGenerator = (function(logger) {
 		
 		opts.numberOfSentences = (typeof(opts.numberOfSentences) === 'undefined') 
 			? 1 : opts.numberOfSentences;
-		opts.endOfSentenceRegex = (typeof(opts.endOfSentenceRegex) === 'undefined') 
-			?  /[!?.]$/ : opts.endOfSentenceRegex;
 		opts.maxWordsPerSentence = (typeof(opts.maxWordsPerSentence) === 'undefined') 
 			?  50 : opts.maxWordsPerSentence;
+		opts.sentenceRegex = (typeof(opts.sentenceRegex) === 'undefined')
+			? /^[A-Z"'][^.!?]*(?:[.!?](?!['"]?\s|$)[^.!?]*)*[!.?]['"]?(?=\s|$)/ : opts.sentenceRegex;
 			
 		return opts;
 	}
@@ -72,15 +78,7 @@ var markovGenerator = (function(logger) {
 		}
 		
 		// select random words to use as a seed for the sentence
-		var words = [];
-		while (true) {
-			// loop until we find one that doesn't have words meeting the endOfSentenceRegex
-			words = getRandomWords(dict, opts.seedPattern).slice();
-			if (opts.endOfSentenceRegex.test(words[0]) === false && 
-				opts.endOfSentenceRegex.test(words[1]) === false) {
-					break;
-				}
-		}
+		var words = getRandomWords(dict, opts.seedPattern).slice();
 		
 		// build the rest of the sentence
 		while (words.length < opts.maxWordsPerSentence) {
@@ -89,16 +87,19 @@ var markovGenerator = (function(logger) {
 			if (nextWord === null) break;
 			// add the word to the sentence
 			words.push(nextWord);
-			// break loop if we've ended in EOS punctuation
-			if (opts.endOfSentenceRegex.test(nextWord)) {
+			// break loop if the words we've got match a sentence 
+			if (opts.sentenceRegex.test(words.join(" "))) {
+				logger.logDebug("*" + words.join(" ") + "* PASSED");
 				break;
+			} else {
+				logger.logDebug("*" + words.join(" ") + "* FAILED");
 			}
 		}
 		
 		var sentence = words.join(" ");
 		
 		// if sentence does not end with punctuation, add ellipsis
-		if (opts.endOfSentenceRegex.test(sentence) === false) {
+		if (opts.sentenceRegex.test(sentence) === false) {
 			sentence += "...";
 		}
 		

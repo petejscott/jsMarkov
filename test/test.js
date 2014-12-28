@@ -179,6 +179,57 @@ QUnit.test( "Build Dictionary - Chain Size 4", function( assert )
 	assert.ok( items[i].words.join("/") === "the/bat/is/a" ,"Dictionary item at index " + i + ": words property value is " + items[i].words.join("/") );
 	assert.ok( items[i].next.join("/") === "gnat" , "Dictionary item at index " + i + ": next property value is " + items[i].next.join("/") );
 });
+QUnit.test( "Regex for Sentence Detection" , function( assert )
+{
+	var regex = /^[A-Z"'][^.!?]*(?:[.!?](?!['"]?\s|$)[^.!?]*)*[!.?]['"]?(?=\s|$)/;
+	
+	// PASS
+	var s = "Match a period at the end.";
+	var sm = regex.test(s);
+	assert.ok( sm === true , "Regex match of *"+s+"* passes as expected ("+ sm + ")" );
+	
+	var s = "Match a question mark at the end?";
+	var sm = regex.test(s);
+	assert.ok( sm === true , "Regex match of *"+s+"* passes as expected ("+ sm + ")" );
+	
+	var s = "Match an exclamation mark at the end!";
+	var sm = regex.test(s);
+	assert.ok( sm === true , "Regex match of *"+s+"* passes as expected ("+ sm + ")" );
+	
+	var s = "Match an \"inner quote\" in the sentence!";
+	var sm = regex.test(s);
+	assert.ok( sm === true , "Regex match of *"+s+"* passes as expected ("+ sm + ")" );
+	
+	var s = "\"Match a quoted sentence!\"";
+	var sm = regex.test(s);
+	assert.ok( sm === true , "Regex match of *"+s+"* passes as expected ("+ sm + ")" );
+
+	var s = "\"Match a front-quoted\" sentence!";
+	var sm = regex.test(s);
+	assert.ok( sm === true , "Regex match of *"+s+"* passes as expected ("+ sm + ")" );
+	
+	var s = "Match an \"end-quoted sentence!\"";
+	var sm = regex.test(s);
+	assert.ok( sm === true , "Regex match of *"+s+"* passes as expected ("+ sm + ")" );
+	
+	var s = "Match a sentence that's got an apostrophe in it.";
+	var sm = regex.test(s);
+	assert.ok( sm === true , "Regex match of *"+s+"* passes as expected ("+ sm + ")" );
+
+	// FAIL
+	var s = "Don't match a sentence lacking closing punctuation";
+	var sm = regex.test(s);
+	assert.ok( sm === false , "Regex match of *"+s+"* failes as expected ("+ sm + ")" );
+	
+	var s = "don't match a sentence that starts without a capital letter.";
+	var sm = regex.test(s);
+	assert.ok( sm === false , "Regex match of *"+s+"* failes as expected ("+ sm + ")" );
+	
+	// var s = "Don't match a sentence \"that has a single quotation mark.";
+	// var sm = regex.test(s);
+	// assert.ok( sm === false , "Regex match of *"+s+"* failes as expected ("+ sm + ")" );
+	
+});
 QUnit.test( "Generator - getRandomWords", function( assert ) 
 {
 	var chainSize = 2;

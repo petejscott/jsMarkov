@@ -21,9 +21,10 @@
 	};
 	Object.preventExtensions(markovSourceOptions);
 	
+	//TODO: get those regexps tightened up
 	var markovOutputOptions = {
-		seedPattern : /[A-Z]/,
-		endOfSentenceRegex : /[!?.]$/,
+		seedPattern : /^[A-Z].*[^"!.?']$/,
+		sentenceRegex : /^[A-Z"'][^.!?]*(?:[.!?](?!['"]?\s|$)[^.!?]*)*[!.?]['"]?(?=\s|$)/,
 		maxWordsPerSentence : 50,
 		numberOfSentences : 1
 	};
