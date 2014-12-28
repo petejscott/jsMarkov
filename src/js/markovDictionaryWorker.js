@@ -4,8 +4,7 @@ if (typeof(importScripts) !== 'undefined') {
 }
 
 onmessage = function(e) {
-	if (typeof(e.data.wordSet) !== 'undefined' && typeof(e.data.chainSize) !== 'undefined')
-	{
+	if (typeof(e.data.wordSet) !== 'undefined' && typeof(e.data.chainSize) !== 'undefined') {
 		var wordSet = e.data.wordSet;
 		var chainSize = e.data.chainSize;
 		try {

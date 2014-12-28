@@ -37,8 +37,7 @@
 		var processedCount=0;
 		var totalFiles = files.length;
 		
-		for (var i = 0; i < totalFiles; i++)
-		{
+		for (var i = 0; i < totalFiles; i++) {
 			var file = files[i];
 			var reader = new FileReader();
 			reader.onload = function(e) {
@@ -104,15 +103,25 @@
 	
 	function bind() {
 	
+		var inputEvent = "input";
+		
+		// check for oninput support
+		var el = document.createElement('input');
+		el.setAttribute('oninput', '');
+		if ('oninput' in el === false) {
+			inputEvent = "change"; // use change instead
+			logger.logDebug("using 'change' event instead of 'input' event.");
+		}	
+		
 		win.document.querySelector(uiElements.sourceFileInput)
 			.addEventListener("change", function(e) { 
 				markovSourceOptions.wordSet = null;
 				markovWordsetBuilder.clearWords();
 				buildDictionary();
 			});
-		
+
 		win.document.querySelector(uiElements.chainSizeInput)
-			.addEventListener("input", function(e) {
+			.addEventListener(inputEvent, function(e) {
 				setChainSizeDescription(e.currentTarget.value);
 			});
 			
@@ -130,7 +139,7 @@
 			});
 		
 		win.document.querySelector(uiElements.sentenceCountInput)
-			.addEventListener("input", function(e) {
+			.addEventListener(inputEvent, function(e) {
 				setSentenceCountDescription(e.currentTarget.value);
 			});
 			
@@ -149,8 +158,7 @@
 			});
 	}
 	
-	function setChainSizeDescription(chainSize)
-	{
+	function setChainSizeDescription(chainSize) {
 		if (!chainSize) {
 			chainSize = win.document.querySelector(uiElements.chainSizeInput).value;
 		}
@@ -173,8 +181,7 @@
 		selectedChainSizeElement.textContent = "(" + chainSizeDescription + ")"; 
 	}
 	
-	function setSentenceCountDescription(numSentences)
-	{
+	function setSentenceCountDescription(numSentences) {
 		if (!numSentences) {
 			numSentences = win.document.querySelector(uiElements.sentenceCountInput).value;
 		}
@@ -182,7 +189,30 @@
 		selectedNumSentencesElement.textContent = "(" + numSentences + ")";
 	}
 	
+	function getUnsupportedFunctionality() {
+		var unsupported = [];
+		
+		// check for web worker support
+		if (typeof(win.Worker) === 'undefined') {
+			unsupported.push("Web Worker");
+		}
+
+		// check for querySelector support
+		if (!typeof(win.document.querySelector) === 'undefined') {
+			unsupported.push("document.querySelector");
+		}
+		
+		return unsupported;
+	}
+	
 	function init() {
+		
+		// ensure client can be supported
+		var unsupported = getUnsupportedFunctionality();
+		if (unsupported.length > 0) {
+			document.getElementsByTagName("main")[0].textContent = ("Sorry, your client lacks required functionality: " + unsupported.join(", "));
+			return;
+		}
 		
 		// set the source/output options to match the values set in the DOM
 		markovSourceOptions.chainSize = win.document.querySelector(uiElements.chainSizeInput).value;
