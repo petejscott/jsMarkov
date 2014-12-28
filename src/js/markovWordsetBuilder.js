@@ -4,10 +4,11 @@ var markovWordsetBuilder = (function(logger) {
 
 	var wordSet = [];
 	
+	//TODO: consider making this function a source option and passing it in to addWords()
 	function transformWord(word) {
 		word = word.replace("Mr.", "Mr");
 		word = word.replace("Mrs.", "Mrs");
-		return word.replace(/[^A-Za-z0-9\s\.\!\?\'\,\—\-]/gi, '');
+		return word.replace(/[^A-Za-z0-9\s\.\!\?\'\,\—\-]/gi, '');	
 	}
 	
 	function clearWords() {
