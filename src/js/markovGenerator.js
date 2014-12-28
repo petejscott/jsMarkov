@@ -53,7 +53,8 @@ var markovGenerator = (function(logger) {
 	function setOptions(dict, opts) {
 	
 		if (opts === null || typeof(opts) === 'undefined') opts = {};
-		
+		//TODO is it safe to assume that the primary client will always pass this in? I don't like defining the 
+		// exact same 'default' values twice. maybe pull opts out to a separate file?
 		opts.numberOfSentences = (typeof(opts.numberOfSentences) === 'undefined') 
 			? 1 : opts.numberOfSentences;
 		opts.maxWordsPerSentence = (typeof(opts.maxWordsPerSentence) === 'undefined') 
